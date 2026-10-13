@@ -2518,8 +2518,16 @@ app.post("/api/trial/claim", requireLogin, async (req,res) => {
     const inbound = await trialInbound(inboundId);
     const expiryTime = Date.now() + TRIAL_DAYS * 86400000;
     const created = await trialXui("/panel/api/clients/add", {method:"POST",body:JSON.stringify({
-      email:email,inboundIds:[inboundId],enable:true,limitIp:1,totalGB:TRIAL_BYTES,expiryTime:expiryTime,
-      remark:"Aura Cloud Free Trial - " + plan,reset:0
+      client: {
+        email: email,
+        enable: true,
+        limitIp: 1,
+        totalGB: TRIAL_BYTES,
+        expiryTime: expiryTime,
+        remark: "Aura Cloud Free Trial - " + plan,
+        reset: 0
+      },
+      inboundIds: [inboundId]
     })});
     let refreshed = inbound;
     try { refreshed = await trialInbound(inboundId); } catch (e) { console.warn("[TRIAL] Inbound refresh:",e.message); }
