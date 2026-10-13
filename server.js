@@ -2518,6 +2518,9 @@ app.post("/api/trial/claim", requireLogin, async (req,res) => {
     const inbound = await trialInbound(inboundId);
     const expiryTime = Date.now() + TRIAL_DAYS * 86400000;
     const created = await trialXui("/panel/api/clients/add", {method:"POST",body:JSON.stringify({
+      // Keep email at the top level for this combined client-creation API,
+      // and inside client for implementations that wrap client settings.
+      email: email,
       client: {
         email: email,
         enable: true,
