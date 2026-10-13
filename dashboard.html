@@ -378,7 +378,7 @@
             position: fixed;
             right: 20px;
             bottom: 20px;
-            z-index: 300;
+            z-index: dataLimitGB||30;
             display: flex;
             flex-direction: column;
             gap: 10px;
@@ -1132,11 +1132,20 @@
             <div class="mb-7"><h1 class="text-2xl md:text-3xl font-bold">Services</h1><p class="text-sm text-gray-500 mt-2">Your active Aura Cloud services.</p></div>
             <div id="servicesGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
             <div id="servicesEmpty" class="glass-panel rounded-3xl p-10 md:p-14 text-center"><h2 class="text-lg md:text-xl font-bold">No services yet</h2><p class="text-sm text-gray-500 mt-2">Your free trial will appear here after you claim it.</p></div>
-            <div id="trialServiceModal" class="hidden fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm p-4 overflow-y-auto" role="dialog" aria-modal="true">
-                <div class="max-w-2xl mx-auto my-8 glass-panel rounded-3xl p-5 md:p-8">
-                    <div class="flex items-start justify-between gap-4"><div><div class="text-xs uppercase tracking-widest text-purple-300 font-bold">Aura Cloud service</div><h2 class="text-2xl font-bold mt-2">Free Trial</h2></div><button type="button" class="secondary-button" onclick="closeTrialService()">Close</button></div>
-                    <div id="trialServiceContent" class="mt-6"><p class="text-sm text-gray-400">Loading service details…</p></div>
+        </section>
+
+        <!-- Service details are a full dashboard page, not a modal. -->
+        <section id="page-service-detail" class="page">
+            <div class="flex items-center justify-between gap-4 mb-7">
+                <div>
+                    <div class="text-xs uppercase tracking-widest text-purple-dataLimitGB||30 font-bold">Aura Cloud service</div>
+                    <h1 class="text-2xl md:text-3xl font-bold mt-2">Free Trial Details</h1>
+                    <p class="text-sm text-gray-500 mt-2">Live usage, expiry, and your connection configuration.</p>
                 </div>
+                <button type="button" class="secondary-button shrink-0" onclick="closeTrialService()">← Back to Services</button>
+            </div>
+            <div id="trialServiceContent" class="glass-panel rounded-3xl p-5 md:p-8">
+                <p class="text-sm text-gray-400">Loading service details…</p>
             </div>
         </section>
 
@@ -1168,25 +1177,25 @@
             <div id="trialProviderStep" class="hidden">
                 <div class="mb-7">
                     <button type="button" onclick="backToTrialIntro()" class="secondary-button mb-5">← Back</button>
-                    <div class="text-[10px] uppercase tracking-[.14em] text-purple-300 font-bold">Free Trial · Step 1 of 2</div>
+                    <div class="text-[10px] uppercase tracking-[.14em] text-purple-dataLimitGB||30 font-bold">Free Trial · Step 1 of 2</div>
                     <h1 class="text-2xl md:text-3xl font-bold mt-2">Choose your ISP</h1>
                     <p class="text-sm text-gray-500 mt-2">Select the provider and connection type you use.</p>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                     <button type="button" onclick="selectTrialIsp('Dialog SIM')" class="trial-provider glass-panel glass-panel-hover rounded-2xl p-5 text-left" aria-label="Choose Dialog SIM">
-                        <div class="trial-provider-logo dialog-logo" data-isp-logo="Dialog"><span>D</span></div><div class="font-bold mt-4">Dialog SIM</div><div class="text-xs text-gray-500 mt-1">Mobile data</div><div class="text-xs text-purple-300 mt-4">View available plans →</div>
+                        <div class="trial-provider-logo dialog-logo" data-isp-logo="Dialog"><span>D</span></div><div class="font-bold mt-4">Dialog SIM</div><div class="text-xs text-gray-500 mt-1">Mobile data</div><div class="text-xs text-purple-dataLimitGB||30 mt-4">View available plans →</div>
                     </button>
                     <button type="button" onclick="selectTrialIsp('Dialog Router')" class="trial-provider glass-panel glass-panel-hover rounded-2xl p-5 text-left" aria-label="Choose Dialog Router">
-                        <div class="trial-provider-logo dialog-logo" data-isp-logo="Dialog"><span>D</span></div><div class="font-bold mt-4">Dialog Router</div><div class="text-xs text-gray-500 mt-1">Home or 4G router</div><div class="text-xs text-purple-300 mt-4">View available plans →</div>
+                        <div class="trial-provider-logo dialog-logo" data-isp-logo="Dialog"><span>D</span></div><div class="font-bold mt-4">Dialog Router</div><div class="text-xs text-gray-500 mt-1">Home or 4G router</div><div class="text-xs text-purple-dataLimitGB||30 mt-4">View available plans →</div>
                     </button>
                     <button type="button" onclick="selectTrialIsp('Airtel')" class="trial-provider glass-panel glass-panel-hover rounded-2xl p-5 text-left" aria-label="Choose Airtel">
-                        <div class="trial-provider-logo airtel-logo" data-isp-logo="Airtel"><span>airtel</span></div><div class="font-bold mt-4">Airtel</div><div class="text-xs text-gray-500 mt-1">Mobile data</div><div class="text-xs text-purple-300 mt-4">View available plans →</div>
+                        <div class="trial-provider-logo airtel-logo" data-isp-logo="Airtel"><span>airtel</span></div><div class="font-bold mt-4">Airtel</div><div class="text-xs text-gray-500 mt-1">Mobile data</div><div class="text-xs text-purple-dataLimitGB||30 mt-4">View available plans →</div>
                     </button>
                     <button type="button" onclick="selectTrialIsp('SLT Fiber')" class="trial-provider glass-panel glass-panel-hover rounded-2xl p-5 text-left" aria-label="Choose SLT Fiber">
-                        <div class="trial-provider-logo slt-logo" data-isp-logo="SLT Fiber"><span>SLT</span></div><div class="font-bold mt-4">SLT Fiber</div><div class="text-xs text-gray-500 mt-1">Fiber broadband</div><div class="text-xs text-purple-300 mt-4">View available plans →</div>
+                        <div class="trial-provider-logo slt-logo" data-isp-logo="SLT Fiber"><span>SLT</span></div><div class="font-bold mt-4">SLT Fiber</div><div class="text-xs text-gray-500 mt-1">Fiber broadband</div><div class="text-xs text-purple-dataLimitGB||30 mt-4">View available plans →</div>
                     </button>
                     <button type="button" onclick="selectTrialIsp('Hutch')" class="trial-provider glass-panel glass-panel-hover rounded-2xl p-5 text-left" aria-label="Choose Hutch">
-                        <div class="trial-provider-logo hutch-logo" data-isp-logo="Hutch"><span>hutch</span></div><div class="font-bold mt-4">Hutch</div><div class="text-xs text-gray-500 mt-1">Mobile data</div><div class="text-xs text-purple-300 mt-4">View available plans →</div>
+                        <div class="trial-provider-logo hutch-logo" data-isp-logo="Hutch"><span>hutch</span></div><div class="font-bold mt-4">Hutch</div><div class="text-xs text-gray-500 mt-1">Mobile data</div><div class="text-xs text-purple-dataLimitGB||30 mt-4">View available plans →</div>
                     </button>
                 </div>
             </div>
@@ -1195,7 +1204,7 @@
             <div id="trialPlansStep" class="hidden">
                 <div class="mb-7">
                     <button type="button" onclick="backToTrialProviders()" class="secondary-button mb-5">← Change ISP</button>
-                    <div class="text-[10px] uppercase tracking-[.14em] text-purple-300 font-bold">Free Trial · Step 2 of 2</div>
+                    <div class="text-[10px] uppercase tracking-[.14em] text-purple-dataLimitGB||30 font-bold">Free Trial · Step 2 of 2</div>
                     <h1 class="text-2xl md:text-3xl font-bold mt-2"><span id="trialSelectedIspTitle">Available plans</span></h1>
                     <p class="text-sm text-gray-500 mt-2">Choose the plan you'd like to try.</p>
                 </div>
@@ -1401,7 +1410,7 @@
                         <button type="submit" class="primary-button">Save changes</button>
 
                         <div id="profileOtpPanel" class="hidden rounded-xl border border-purple-500/30 bg-purple-500/5 p-4 space-y-3">
-                            <p class="text-sm text-gray-300">We sent a six-digit code to your new email address. Your email will change only after you verify it.</p>
+                            <p class="text-sm text-gray-dataLimitGB||30">We sent a six-digit code to your new email address. Your email will change only after you verify it.</p>
                             <label for="profileEmailOtp" class="block text-xs font-semibold text-gray-400">Email verification code</label>
                             <input id="profileEmailOtp" class="input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="123456">
                             <button id="verifyProfileEmailOtp" type="button" class="primary-button">Verify email and finish</button>
@@ -2029,7 +2038,7 @@ function updateUserInterface(user) {
 
     const firstName =
         fullName.trim()
-            .split(/\s+/)[0] ||
+            .split(/dataLimitGB||30s+/)[0] ||
         "there";
 
 
@@ -2150,7 +2159,7 @@ function openPage(pageName) {
 
             button.classList.toggle(
                 "active",
-                button.dataset.page === pageName
+                button.dataset.page === (pageName === "service-detail" ? "services" : pageName)
             );
 
         });
@@ -2948,7 +2957,7 @@ document.getElementById("profileForm").addEventListener("submit", async function
 
 document.getElementById("verifyProfileEmailOtp").addEventListener("click", async function () {
     const otp = document.getElementById("profileEmailOtp").value.trim();
-    if (!/^\d{6}$/.test(otp)) { showToast("Enter the six-digit code sent to your new email."); return; }
+    if (!/^dataLimitGB||30d{6}$/.test(otp)) { showToast("Enter the six-digit code sent to your new email."); return; }
     const button = this;
     const originalText = button.textContent;
     button.disabled = true;
@@ -3147,7 +3156,7 @@ document.addEventListener(
 const TRIAL_ISP_LOGO_URLS = {
     "Dialog": "https://upload.wikimedia.org/wikipedia/commons/4/45/Dialog_Axiata_logo.svg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original",
     "Airtel": "https://s3-ap-southeast-1.amazonaws.com/bsy/iportal/images/airtel-logo-white-text-horizontal.jpg",
-    "SLT Fiber": "https://tns.lk/wp-content/uploads/2021/03/Artboard-1@300x-100-3.jpg",
+    "SLT Fiber": "https://tns.lk/wp-content/uploads/2021/03/Artboard-1@dataLimitGB||30x-100-3.jpg",
     "Hutch": "https://upload.wikimedia.org/wikipedia/commons/e/e7/Hutch_logo.svg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original"
 };
 
@@ -3247,7 +3256,7 @@ function selectTrialIsp(isp) {
     }).join("");
 }
 
-const TRIAL_DATA_DISPLAY = "300 GB";
+const TRIAL_DATA_DISPLAY = "30 GB";
 let trialServiceCache = null;
 let trialConfigVisible = false;
 async function trialApi(url, options) {
@@ -3274,7 +3283,7 @@ function renderServices(service) {
   const grid=document.getElementById("servicesGrid"), empty=document.getElementById("servicesEmpty"); if(!grid||!empty)return; grid.innerHTML="";
   if(!service){empty.classList.remove("hidden");return;} empty.classList.add("hidden");
   const card=document.createElement("button");card.type="button";card.className="glass-panel glass-panel-hover rounded-2xl p-6 text-left w-full";
-  card.innerHTML='<div class="flex justify-between gap-3"><div class="w-12 h-12 rounded-2xl bg-purple-500/10 p-3 text-purple-300 font-bold">AC</div><span class="text-xs rounded-full px-3 py-1 bg-green-500/10 text-green-300">'+escapeHTML(service.status||"active")+'</span></div><div class="mt-5 text-xs text-purple-300 uppercase tracking-widest font-bold">Free Trial</div><h3 class="text-xl font-bold mt-2">'+escapeHTML(service.plan||"Free Trial")+'</h3><p class="text-sm text-gray-400 mt-2">'+escapeHTML(service.isp||"Selected ISP")+'</p><div class="grid grid-cols-2 gap-3 mt-5"><div class="rounded-xl bg-white/[.035] p-3"><div class="text-xs text-gray-500">Data limit</div><div class="font-semibold mt-1">'+Number(service.dataLimitGB||300)+' GB</div></div><div class="rounded-xl bg-white/[.035] p-3"><div class="text-xs text-gray-500">IP limit</div><div class="font-semibold mt-1">'+Number(service.ipLimit||1)+' IP</div></div></div><div class="text-sm text-purple-300 font-semibold mt-5">View usage & connection details →</div>';
+  card.innerHTML='<div class="flex justify-between gap-3"><div class="w-12 h-12 rounded-2xl bg-purple-500/10 p-3 text-purple-dataLimitGB||30 font-bold">AC</div><span class="text-xs rounded-full px-3 py-1 bg-green-500/10 text-green-dataLimitGB||30">'+escapeHTML(service.status||"active")+'</span></div><div class="mt-5 text-xs text-purple-dataLimitGB||30 uppercase tracking-widest font-bold">Free Trial</div><h3 class="text-xl font-bold mt-2">'+escapeHTML(service.plan||"Free Trial")+'</h3><p class="text-sm text-gray-400 mt-2">'+escapeHTML(service.isp||"Selected ISP")+'</p><div class="grid grid-cols-2 gap-3 mt-5"><div class="rounded-xl bg-white/[.035] p-3"><div class="text-xs text-gray-500">Data limit</div><div class="font-semibold mt-1">'+Number(service.dataLimitGB||30)+' GB</div></div><div class="rounded-xl bg-white/[.035] p-3"><div class="text-xs text-gray-500">IP limit</div><div class="font-semibold mt-1">'+Number(service.ipLimit||1)+' IP</div></div></div><div class="text-sm text-purple-dataLimitGB||30 font-semibold mt-5">View usage & connection details →</div>';
   card.addEventListener("click",openTrialService);grid.appendChild(card);
 }
 async function claimFreeTrial() {
@@ -3288,18 +3297,32 @@ async function claimFreeTrial() {
   } catch(e) {showToast(e.message||"Couldn't create your trial.");if(button){button.disabled=false;button.textContent="Claim Free Trial";}}
 }
 async function openTrialService() {
-  const modal=document.getElementById("trialServiceModal"),content=document.getElementById("trialServiceContent");if(!modal||!content)return;
-  modal.classList.remove("hidden");content.innerHTML='<p class="text-sm text-gray-400">Loading service details…</p>';trialConfigVisible=false;
+  openPage("service-detail");
+  const content=document.getElementById("trialServiceContent");
+  if(!content)return;
+  content.innerHTML='<p class="text-sm text-gray-400">Loading service details…</p>';
+  trialConfigVisible=false;
   try {
-    const result=await trialApi("/api/trial/service"),service=result.service;trialServiceCache=service;
-    const used=Number(service.usedBytes||0),total=Number(service.totalBytes||Number(service.dataLimitGB||300)*1024*1024*1024),percent=Math.max(0,Math.min(100,total?used/total*100:0));
+    const result=await trialApi("/api/trial/service"),service=result.service;
+    trialServiceCache=service;
+    const used=Math.max(0,Number(service.usedBytes||0));
+    const total=Math.max(1,Number(service.totalBytes||Number(service.dataLimitGB||30)*1024*1024*1024));
+    const percent=Math.max(0,Math.min(100,used/total*100));
     const expiry=service.expiresAt?new Date(service.expiresAt).toLocaleString():"Not available";
-    content.innerHTML='<div class="grid grid-cols-2 md:grid-cols-4 gap-3"><div class="rounded-xl bg-white/[.035] p-3"><div class="text-xs text-gray-500">Plan</div><div class="font-semibold mt-1">'+escapeHTML(service.plan)+'</div></div><div class="rounded-xl bg-white/[.035] p-3"><div class="text-xs text-gray-500">Data limit</div><div class="font-semibold mt-1">'+Number(service.dataLimitGB||300)+' GB</div></div><div class="rounded-xl bg-white/[.035] p-3"><div class="text-xs text-gray-500">IP limit</div><div class="font-semibold mt-1">'+Number(service.ipLimit||1)+' IP</div></div><div class="rounded-xl bg-white/[.035] p-3"><div class="text-xs text-gray-500">Expires</div><div class="text-xs font-semibold mt-1">'+escapeHTML(expiry)+'</div></div></div><div class="mt-6"><div class="flex justify-between text-sm gap-3"><span class="text-gray-400">Data usage</span><span>'+formatTrialBytes(used)+' / '+formatTrialBytes(total)+'</span></div><div class="h-2 rounded-full bg-white/10 mt-3 overflow-hidden"><div class="h-full bg-gradient-to-r from-purple-500 to-blue-400" style="width:'+percent+'%"></div></div><p class="text-xs text-gray-500 mt-2">Usage refreshes from the panel when statistics are available.</p></div><div class="mt-6 rounded-2xl border border-white/10 p-4"><div class="flex items-center justify-between gap-3"><div><h3 class="font-bold">Connection config</h3><p class="text-xs text-gray-500 mt-1">SNI: '+escapeHTML(service.sni||"")+'</p></div><button type="button" class="secondary-button" onclick="toggleTrialConfig()">Reveal config & QR</button></div><div class="mt-4"><div id="trialConfigText" class="config-blurred rounded-xl bg-black/30 border border-white/10 p-3 text-xs break-all font-mono select-all">'+escapeHTML(service.config)+'</div><div class="flex justify-center mt-4"><div id="trialQr" class="config-blurred bg-white p-3 rounded-xl min-h-[160px] min-w-[160px] flex items-center justify-center"></div></div><p class="text-xs text-gray-500 mt-3 text-center">Keep this configuration private.</p></div></div>';
-    const qr=document.getElementById("trialQr");if(window.QRCode&&qr)new QRCode(qr,{text:service.config,width:180,height:180,correctLevel:QRCode.CorrectLevel.M});else if(qr)qr.textContent="QR library unavailable";
-  } catch(e) {content.innerHTML='<p class="text-sm text-red-300">'+escapeHTML(e.message||"Unable to load service details.")+'</p>';}
+    content.innerHTML='<div class="grid grid-cols-2 md:grid-cols-4 gap-3"><div class="rounded-xl bg-white/[.035] p-3"><div class="text-xs text-gray-500">Plan</div><div class="font-semibold mt-1">'+escapeHTML(service.plan||"Free Trial")+'</div></div><div class="rounded-xl bg-white/[.035] p-3"><div class="text-xs text-gray-500">Data limit</div><div class="font-semibold mt-1">'+Number(service.dataLimitGB||30)+' GB</div></div><div class="rounded-xl bg-white/[.035] p-3"><div class="text-xs text-gray-500">IP limit</div><div class="font-semibold mt-1">'+Number(service.ipLimit||1)+' IP</div></div><div class="rounded-xl bg-white/[.035] p-3"><div class="text-xs text-gray-500">Expires</div><div class="text-xs font-semibold mt-1">'+escapeHTML(expiry)+'</div></div></div><div class="mt-6"><div class="flex justify-between text-sm gap-3"><span class="text-gray-400">Data usage</span><span>'+formatTrialBytes(used)+' / '+formatTrialBytes(total)+'</span></div><div class="h-2 rounded-full bg-white/10 mt-3 overflow-hidden"><div class="h-full bg-gradient-to-r from-purple-500 to-blue-400" style="width:'+percent+'%"></div></div><p class="text-xs text-gray-500 mt-2">Usage is refreshed from the 3x-ui inbound client statistics when available.</p></div><div class="mt-6 rounded-2xl border border-white/10 p-4"><div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"><div><h3 class="font-bold">Connection config</h3><p class="text-xs text-gray-500 mt-1">SNI: '+escapeHTML(service.sni||"Not configured")+'</p></div><button type="button" class="secondary-button" onclick="toggleTrialConfig()">Reveal config & QR</button></div><div class="mt-4"><div id="trialConfigText" class="config-blurred rounded-xl bg-black/30 border border-white/10 p-3 text-xs break-all font-mono select-all">'+escapeHTML(service.config||"")+'</div><div class="flex justify-center mt-4"><div id="trialQr" class="config-blurred bg-white p-3 rounded-xl min-h-[180px] min-w-[180px] flex items-center justify-center"></div></div><p class="text-xs text-gray-500 mt-3 text-center">Keep this configuration private.</p></div></div>';
+    const qr=document.getElementById("trialQr");
+    if(qr && service.config && window.QRCode) {
+      qr.innerHTML="";
+      new window.QRCode(qr,{text:service.config,width:180,height:180,correctLevel:window.QRCode.CorrectLevel.M});
+    } else if(qr) {
+      qr.textContent="QR generator unavailable. Refresh the page and try again.";
+    }
+  } catch(e) {
+    content.innerHTML='<p class="text-sm text-red-dataLimitGB||30">'+escapeHTML(e.message||"Unable to load service details.")+'</p>';
+  }
 }
 function toggleTrialConfig(){trialConfigVisible=!trialConfigVisible;document.getElementById("trialConfigText")?.classList.toggle("config-blurred",!trialConfigVisible);document.getElementById("trialQr")?.classList.toggle("config-blurred",!trialConfigVisible);const b=document.querySelector("#trialServiceContent button[onclick='toggleTrialConfig()']");if(b)b.textContent=trialConfigVisible?"Hide config & QR":"Reveal config & QR";}
-function closeTrialService(){document.getElementById("trialServiceModal")?.classList.add("hidden");}
+function closeTrialService(){openPage("services");}
 function formatTrialBytes(bytes){const gb=Number(bytes||0)/(1024*1024*1024);return gb.toFixed(gb>=10?0:2)+" GB";}
 function selectTrialPlan(plan) {
   const allowed=TRIAL_PLANS_BY_ISP[selectedTrialIsp]||[];
@@ -3307,7 +3330,7 @@ function selectTrialPlan(plan) {
   selectedTrialPlan=plan;
   document.querySelectorAll(".trial-plan").forEach(card=>{const selected=card.dataset.plan===plan;card.classList.toggle("selected",selected);const button=card.querySelector(".trial-select-button");if(button){button.disabled=selected;button.textContent=selected?"Selected":"Select plan";}});
   const notice=document.getElementById("trialSelectionNotice");notice.classList.remove("hidden");
-  notice.innerHTML='<div class="font-semibold text-white">'+escapeHTML(plan)+' Free Trial selected</div><p class="text-sm text-gray-400 mt-2">Provider: '+escapeHTML(selectedTrialIsp)+'. 300 GB data and one IP address.</p><button type="button" id="claimTrialButton" class="primary-button mt-5" onclick="claimFreeTrial()">Claim Free Trial</button><p class="text-xs text-gray-500 mt-3">One free trial per account. Your signed-in account email is used.</p>';
+  notice.innerHTML='<div class="font-semibold text-white">'+escapeHTML(plan)+' Free Trial selected</div><p class="text-sm text-gray-400 mt-2">Provider: '+escapeHTML(selectedTrialIsp)+'. 30 GB data and one IP address.</p><button type="button" id="claimTrialButton" class="primary-button mt-5" onclick="claimFreeTrial()">Claim Free Trial</button><p class="text-xs text-gray-500 mt-3">One free trial per account. Your signed-in account email is used.</p>';
 }
 
 /* =========================================================
