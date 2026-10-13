@@ -251,6 +251,44 @@ const FIREBASE_WEB_CONFIG = {
         process.env.FIREBASE_APP_ID || ""
 };
 
+// ============================================================
+// FIREBASE WEB CONFIG DIAGNOSTICS
+// ============================================================
+
+function logFirebaseWebConfigStatus() {
+    const missing = [];
+
+    if (!FIREBASE_WEB_CONFIG.apiKey) {
+        missing.push("FIREBASE_API_KEY (or FIREBASE_WEB_API_KEY)");
+    }
+
+    if (!process.env.FIREBASE_PROJECT_ID) {
+        missing.push("FIREBASE_PROJECT_ID");
+    }
+
+    if (!FIREBASE_WEB_CONFIG.authDomain) {
+        missing.push("FIREBASE_AUTH_DOMAIN");
+    }
+
+    if (!FIREBASE_WEB_CONFIG.appId) {
+        missing.push("FIREBASE_APP_ID");
+    }
+
+    if (missing.length > 0) {
+        console.error("[Firebase Web] CONFIGURATION ISSUE: Missing environment variable(s):");
+        for (const name of missing) {
+            console.error(`[Firebase Web]   - ${name}`);
+        }
+        console.error("[Firebase Web] Check the hosting panel's environment variables or your local .env file, then restart the server.");
+    } else {
+        console.log("[Firebase Web] Required web config variables are present.");
+    }
+
+    // Never print the actual API key or other credential values.
+}
+
+logFirebaseWebConfigStatus();
+
 
 // ============================================================
 // RECAPTCHA
