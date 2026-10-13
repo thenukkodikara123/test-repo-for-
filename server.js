@@ -2321,6 +2321,204 @@ app.get(
 );
 
 
+
+// FREE TRIAL: authenticated account -> bearer-token 3x-ui API
+const TRIAL_ISP_PLANS = {
+  "Dialog SIM":["TikTok"], "Dialog Router":["Zoom"], "Airtel":["TikTok","YouTube","Zoom"],
+  "Hutch":["Zoom"], "SLT Fiber":["Netflix","Zoom"]
+};
+const TRIAL_SNI_ENV = { TikTok:"XUI_SNI_TIKTOK", YouTube:"XUI_SNI_YOUTUBE", Zoom:"XUI_SNI_ZOOM", Netflix:"XUI_SNI_NETFLIX" };
+const TRIAL_GB = Math.max(1, Number(process.env.XUI_TRIAL_DATA_GB || 300));
+const TRIAL_DAYS = Math.max(1, Number(process.env.XUI_TRIAL_DAYS || 3));
+const TRIAL_BYTES = Math.round(TRIAL_GB * 1024 * 1024 * 1024);
+
+async function trialXui(pathname, options) {
+  const base = String(process.env.XUI_BASE_URL || "").trim().replace(/\/+$/, "");
+  const token = String(process.env.XUI_API_TOKEN || "").trim();
+  if (!base || !token) throw new Error("XUI_BASE_URL and XUI_API_TOKEN must be configured.");
+  const u = new URL(base);
+  if (u.protocol !== "https:" && u.protocol !== "http:") throw new Error("XUI_BASE_URL must use HTTP or HTTPS.");
+  const response = await fetch(base + pathname, {
+    ...(options || {}),
+    signal: AbortSignal.timeout(15000),
+    headers: { Accept:"application/json", Authorization:"Bearer " + token,
+      ...((options && options.body) ? {"Content-Type":"application/json"} : {}),
+      ...((options && options.headers) || {}) }
+  });
+  const raw = await response.text();
+  let data;
+  try { data = raw ? JSON.parse(raw) : {}; }
+  catch { throw new Error("3x-ui returned non-JSON data; check the panel API URL and token."); }
+  if (!response.ok || data.success === false) throw new Error("3x-ui API error: " + String(data.msg || data.message || data.error || response.status).slice(0, 240));
+  return data;
+}
+function trialObj(v) {
+  if (v && typeof v === "object") return v;
+  if (typeof v === "string") { try { return JSON.parse(v); } catch (_) {} }
+  return {};
+}
+function trialUnwrap(data) { return data && (data.obj !== undefined ? data.obj : data.data !== undefined ? data.data : data.client !== undefined ? data.client : data); }
+async function trialInbound(id) {
+  let data = await trialXui("/panel/api/inbounds/list");
+  let obj = trialUnwrap(data);
+  let list = Array.isArray(obj) ? obj : (Array.isArray(obj.inbounds) ? obj.inbounds : []);
+  let inbound = list.find(x => Number(x.id) === Number(id));
+  if (!inbound) {
+    data = await trialXui("/panel/api/inbounds/" + encodeURIComponent(id));
+    obj = trialUnwrap(data);
+    inbound = Number(obj.id) === Number(id) ? obj : null;
+  }
+  if (!inbound) throw new Error("Configured 3x-ui inbound was not found.");
+  return inbound;
+}
+function trialClient(inbound, email) {
+  const settings = trialObj(inbound.settings);
+  const clients = Array.isArray(settings.clients) ? settings.clients : [];
+  const stats = Array.isArray(inbound.clientStats) ? inbound.clientStats : [];
+  return {
+    client: clients.find(c => String(c.email || "").toLowerCase() === email.toLowerCase()) || null,
+    stat: stats.find(c => String(c.email || "").toLowerCase() === email.toLowerCase()) || null
+  };
+}
+function trialConfig(inbound, client, email, plan, sni) {
+  const protocol = String(inbound.protocol || "").toLowerCase();
+  const port = Number(inbound.port);
+  const host = String(process.env.XUI_PUBLIC_HOST || new URL(process.env.XUI_BASE_URL).hostname).trim();
+  const stream = trialObj(inbound.streamSettings);
+  const network = String(stream.network || "tcp").toLowerCase();
+  const security = String(stream.security || "none").toLowerCase();
+  const tls = trialObj(stream.tlsSettings);
+  const reality = trialObj(stream.realitySettings);
+  const realitySettings = trialObj(reality.settings);
+  const id = client.id || client.password || client.auth;
+  if (!id || !port || !host) throw new Error("Panel client ID, inbound port, or public host is missing.");
+  const p = new URLSearchParams({ type:network, security:security, sni:sni });
+  if (network === "tcp") {
+    const tcp = trialObj(stream.tcpSettings);
+    const header = trialObj(tcp.header);
+    if (header.type) p.set("headerType", header.type);
+  }
+  if (network === "ws") {
+    const ws = trialObj(stream.wsSettings);
+    if (ws.path) p.set("path", ws.path);
+    if (ws.host) p.set("host", ws.host);
+  }
+  if (network === "grpc") {
+    const grpc = trialObj(stream.grpcSettings);
+    if (grpc.serviceName) p.set("serviceName", grpc.serviceName);
+  }
+  if (security === "reality") {
+    p.set("fp", "chrome");
+    const pk = realitySettings.publicKey || realitySettings.serverPublicKey;
+    if (pk) p.set("pbk", pk);
+    if (Array.isArray(reality.shortIds) && reality.shortIds[0]) p.set("sid", reality.shortIds[0]);
+    if (realitySettings.spiderX) p.set("spx", realitySettings.spiderX);
+  } else if (security === "tls") {
+    p.set("fp", tls.fingerprint || "chrome");
+    if (Array.isArray(tls.alpn)) p.set("alpn", tls.alpn.join(","));
+  }
+  const label = encodeURIComponent(("Aura-Free-Trial-" + plan + "-" + email).replace(/[^a-zA-Z0-9._-]/g, "-"));
+  if (protocol === "vless") return "vless://" + encodeURIComponent(id) + "@" + host + ":" + port + "?encryption=none&" + p.toString() + "#" + label;
+  if (protocol === "trojan") return "trojan://" + encodeURIComponent(id) + "@" + host + ":" + port + "?" + p.toString() + "#" + label;
+  if (protocol === "vmess") {
+    const vmess = {v:"2",ps:"Aura-Free-Trial-" + plan,add:host,port:String(port),id:id,aid:String(client.alterId || 0),scy:client.security || "auto",net:network,type:"none",host:"",path:"",tls:security === "tls" ? "tls" : "",sni:sni};
+    if (network === "ws") { const ws = trialObj(stream.wsSettings); vmess.path = ws.path || ""; vmess.host = ws.host || ""; }
+    return "vmess://" + Buffer.from(JSON.stringify(vmess)).toString("base64");
+  }
+  throw new Error("Only VLESS, VMess, and Trojan inbound configurations can be generated automatically.");
+}
+async function trialStored(uid) {
+  const snap = await db.collection("trialServices").doc(uid).get();
+  return snap.exists ? snap.data() : null;
+}
+function trialPublic(data) {
+  if (!data) return null;
+  return { type:"Free Trial", plan:data.plan, isp:data.isp, email:data.email, status:data.status,
+    dataLimitGB:data.dataLimitGB || TRIAL_GB, totalBytes:data.totalBytes || TRIAL_BYTES,
+    usedBytes:data.usedBytes || 0, ipLimit:data.ipLimit || 1, days:data.days || TRIAL_DAYS,
+    createdAt:data.createdAt || null, expiresAt:data.expiresAt || null };
+}
+app.get("/api/trial", requireLogin, async (req,res) => {
+  try {
+    const service = await trialStored(req.session.uid);
+    res.json({success:true, claimed:!!(service && service.status !== "failed"), service:trialPublic(service)});
+  } catch (e) { console.error("[TRIAL]",e.message); res.status(500).json({success:false,message:"Unable to load trial service."}); }
+});
+app.post("/api/trial/claim", requireLogin, async (req,res) => {
+  const uid = req.session.uid;
+  const ref = db.collection("trialServices").doc(uid);
+  let reserved = false;
+  const reservationId = crypto.randomUUID();
+  try {
+    const user = await firebaseAuth.getUser(uid);
+    const email = String(user.email || req.session.email || "").trim().toLowerCase();
+    const isp = String(req.body && req.body.isp || "").trim();
+    const plan = String(req.body && req.body.plan || "").trim();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({success:false,message:"A valid account email is required."});
+    if (!Object.prototype.hasOwnProperty.call(TRIAL_ISP_PLANS,isp) || !TRIAL_ISP_PLANS[isp].includes(plan) || !TRIAL_SNI_ENV[plan]) return res.status(400).json({success:false,message:"Choose a valid ISP and package."});
+    const inboundId = Number(process.env.XUI_INBOUND_ID || 1);
+    const sni = String(process.env[TRIAL_SNI_ENV[plan]] || "").trim();
+    if (!Number.isInteger(inboundId) || inboundId < 1 || !sni) return res.status(500).json({success:false,message:"XUI inbound or package SNI environment settings are missing."});
+    await db.runTransaction(async tx => {
+      const snap = await tx.get(ref);
+      if (snap.exists && snap.data().status !== "failed") {
+        const err = new Error(snap.data().status === "creating" ? "Your trial is already being created." : "You have already claimed your free trial.");
+        err.statusCode = 409; throw err;
+      }
+      tx.set(ref,{uid:uid,email:email,isp:isp,plan:plan,sni:sni,inboundId:inboundId,status:"creating",reservationId:reservationId,createdAt:new Date().toISOString(),dataLimitGB:TRIAL_GB,totalBytes:TRIAL_BYTES,usedBytes:0,ipLimit:1,days:TRIAL_DAYS});
+    });
+    reserved = true;
+    const inbound = await trialInbound(inboundId);
+    const expiryTime = Date.now() + TRIAL_DAYS * 86400000;
+    const created = await trialXui("/panel/api/clients", {method:"POST",body:JSON.stringify({
+      email:email,inboundIds:[inboundId],enable:true,limitIp:1,totalGB:TRIAL_BYTES,expiryTime:expiryTime,
+      remark:"Aura Cloud Free Trial - " + plan,reset:0
+    })});
+    let refreshed = inbound;
+    try { refreshed = await trialInbound(inboundId); } catch (e) { console.warn("[TRIAL] Inbound refresh:",e.message); }
+    let found = trialClient(refreshed,email);
+    let client = found.client;
+    if (!client) {
+      const obj = trialUnwrap(created);
+      client = obj.client || obj.obj && obj.obj.client || obj;
+      if (Array.isArray(client)) client = client.find(c => String(c.email || "").toLowerCase() === email);
+    }
+    if (!client || !(client.id || client.password || client.auth)) {
+      try {
+        const lookup = trialUnwrap(await trialXui("/panel/api/clients/" + encodeURIComponent(email)));
+        client = lookup.client || lookup.obj && lookup.obj.client || lookup;
+      } catch (e) { console.warn("[TRIAL] Client lookup:",e.message); }
+    }
+    if (!client || !(client.id || client.password || client.auth)) throw new Error("Panel accepted the request but the client ID could not be read back. Verify the API's client response format.");
+    const config = trialConfig(refreshed,client,email,plan,sni);
+    const service = {uid:uid,email:email,isp:isp,plan:plan,sni:sni,inboundId:inboundId,clientId:client.id || null,status:"active",config:config,
+      createdAt:new Date().toISOString(),expiresAt:new Date(expiryTime).toISOString(),dataLimitGB:TRIAL_GB,totalBytes:TRIAL_BYTES,
+      usedBytes:Number(found.stat && found.stat.up || 0)+Number(found.stat && found.stat.down || 0),ipLimit:1,days:TRIAL_DAYS,reservationId:reservationId};
+    await ref.set(service,{merge:true});
+    res.status(201).json({success:true,claimed:true,service:trialPublic(service)});
+  } catch (e) {
+    if (reserved) {
+      try { await ref.set({status:"failed",failureReason:String(e.message || "Provisioning failed").slice(0,250),failedAt:new Date().toISOString()},{merge:true}); } catch (_) {}
+    }
+    console.error("[TRIAL] Claim failed:",e.message);
+    res.status(Number(e.statusCode) || 502).json({success:false,message:e.statusCode === 409 ? e.message : "Trial provisioning failed. Check the 3x-ui bearer-token API, inbound ID, and client API permissions."});
+  }
+});
+app.get("/api/trial/service", requireLogin, async (req,res) => {
+  try {
+    const data = await trialStored(req.session.uid);
+    if (!data || data.status !== "active" || !data.config) return res.status(404).json({success:false,message:"No active free trial found."});
+    let usedBytes = Number(data.usedBytes || 0);
+    try {
+      const inbound = await trialInbound(data.inboundId || Number(process.env.XUI_INBOUND_ID || 1));
+      const found = trialClient(inbound,data.email);
+      if (found.stat) usedBytes = Number(found.stat.up || 0) + Number(found.stat.down || 0);
+    } catch (e) { console.warn("[TRIAL] Usage refresh unavailable:",e.message); }
+    res.json({success:true,service:{...trialPublic({...data,usedBytes}),sni:data.sni,config:data.config}});
+  } catch (e) { console.error("[TRIAL] Service details:",e.message); res.status(500).json({success:false,message:"Unable to load trial details."}); }
+});
+
+
 // ============================================================
 // SERVE PUBLIC FILES
 // ============================================================
@@ -2336,30 +2534,16 @@ app.use(
 // DASHBOARD PAGE
 // ============================================================
 
-app.get(
-    "/dashboard",
-    (req, res) => {
-        res.sendFile(
-            path.join(
-                PUBLIC_DIR,
-                "dashboard.html"
-            )
-        );
-    }
-);
+app.get("/dashboard", (req,res) => {
+    const pub = path.join(PUBLIC_DIR,"dashboard.html");
+    res.sendFile(fs.existsSync(pub) ? pub : path.join(__dirname,"dashboard.html"));
+});
 
 
-app.get(
-    "/dashboard.html",
-    (req, res) => {
-        res.sendFile(
-            path.join(
-                PUBLIC_DIR,
-                "dashboard.html"
-            )
-        );
-    }
-);
+app.get("/dashboard.html", (req,res) => {
+    const pub = path.join(PUBLIC_DIR,"dashboard.html");
+    res.sendFile(fs.existsSync(pub) ? pub : path.join(__dirname,"dashboard.html"));
+});
 
 
 // ============================================================
