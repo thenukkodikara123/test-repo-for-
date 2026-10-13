@@ -2378,6 +2378,8 @@ async function trialXui(pathname, options) {
   if (!base || !token) throw new Error("XUI_BASE_URL and XUI_API_TOKEN must be configured.");
   const u = new URL(base);
   if (u.protocol !== "https:" && u.protocol !== "http:") throw new Error("XUI_BASE_URL must use HTTP or HTTPS.");
+  const method = String((options && options.method) || "GET").toUpperCase();
+  // Include the endpoint and HTTP status in diagnostics, but never log the bearer token.
   const response = await fetch(base + pathname, {
     ...(options || {}),
     signal: AbortSignal.timeout(15000),
@@ -2388,8 +2390,13 @@ async function trialXui(pathname, options) {
   const raw = await response.text();
   let data;
   try { data = raw ? JSON.parse(raw) : {}; }
-  catch { throw new Error("3x-ui returned non-JSON data; check the panel API URL and token."); }
-  if (!response.ok || data.success === false) throw new Error("3x-ui API error: " + String(data.msg || data.message || data.error || response.status).slice(0, 240));
+  catch {
+    throw new Error(`3x-ui ${method} ${pathname} returned HTTP ${response.status} with a non-JSON response. Check XUI_BASE_URL, its panel base path, and the API endpoint.`);
+  }
+  if (!response.ok || data.success === false) {
+    const reason = String(data.msg || data.message || data.error || response.status).slice(0, 240);
+    throw new Error(`3x-ui ${method} ${pathname} failed (HTTP ${response.status}): ${reason}`);
+  }
   return data;
 }
 function trialObj(v) {
