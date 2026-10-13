@@ -2518,7 +2518,8 @@ app.post("/api/trial/claim", requireLogin, async (req,res) => {
     const inbound = await trialInbound(inboundId);
     const expiryTime = Date.now() + TRIAL_DAYS * 86400000;
     const clientId = crypto.randomUUID();
-    const created = await trialXui("/panel/api/clients/add", {method:"POST",body:JSON.stringify({
+    // Match the documented/tested 3x-ui API body: a flat client object.
+    const clientPayload = {
       id: clientId,
       email: email,
       enable: true,
@@ -2530,7 +2531,22 @@ app.post("/api/trial/claim", requireLogin, async (req,res) => {
       group: "Trial",
       remark: "Aura Cloud Free Trial - " + plan,
       reset: 0
-    })});
+    };
+    if (!clientPayload.email || !clientPayload.email.includes("@")) {
+      throw new Error("Dashboard account email was empty or invalid before calling 3x-ui.");
+    }
+    console.log("[TRIAL] Sending client-create request:", JSON.stringify({
+      endpoint: "/panel/api/clients/add",
+      method: "POST",
+      emailPresent: Boolean(clientPayload.email),
+      emailDomain: clientPayload.email.split("@")[1] || null,
+      inboundIds: clientPayload.inboundIds,
+      payloadKeys: Object.keys(clientPayload)
+    }));
+    const created = await trialXui("/panel/api/clients/add", {
+      method: "POST",
+      body: JSON.stringify(clientPayload)
+    });
     let refreshed = inbound;
     try { refreshed = await trialInbound(inboundId); } catch (e) { console.warn("[TRIAL] Inbound refresh:",e.message); }
     let found = trialClient(refreshed,email);
