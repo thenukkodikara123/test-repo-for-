@@ -2368,7 +2368,7 @@ const TRIAL_ISP_PLANS = {
   "Hutch":["Zoom"], "SLT Fiber":["Netflix","Zoom"]
 };
 const TRIAL_SNI_ENV = { TikTok:"XUI_SNI_TIKTOK", YouTube:"XUI_SNI_YOUTUBE", Zoom:"XUI_SNI_ZOOM", Netflix:"XUI_SNI_NETFLIX" };
-const TRIAL_GB = Math.max(1, Number(process.env.XUI_TRIAL_DATA_GB || 300));
+const TRIAL_GB = 30; // Free trial allowance is fixed at 30 GiB.
 const TRIAL_DAYS = Math.max(1, Number(process.env.XUI_TRIAL_DAYS || 3));
 const TRIAL_BYTES = Math.round(TRIAL_GB * 1024 * 1024 * 1024);
 
@@ -2517,20 +2517,19 @@ app.post("/api/trial/claim", requireLogin, async (req,res) => {
     reserved = true;
     const inbound = await trialInbound(inboundId);
     const expiryTime = Date.now() + TRIAL_DAYS * 86400000;
+    const clientId = crypto.randomUUID();
     const created = await trialXui("/panel/api/clients/add", {method:"POST",body:JSON.stringify({
-      // Keep email at the top level for this combined client-creation API,
-      // and inside client for implementations that wrap client settings.
+      id: clientId,
       email: email,
-      client: {
-        email: email,
-        enable: true,
-        limitIp: 1,
-        totalGB: TRIAL_BYTES,
-        expiryTime: expiryTime,
-        remark: "Aura Cloud Free Trial - " + plan,
-        reset: 0
-      },
-      inboundIds: [inboundId]
+      enable: true,
+      totalGB: TRIAL_BYTES,
+      expiryTime: expiryTime,
+      limitIp: 1,
+      limitHwid: 0,
+      inboundIds: [inboundId],
+      group: "Trial",
+      remark: "Aura Cloud Free Trial - " + plan,
+      reset: 0
     })});
     let refreshed = inbound;
     try { refreshed = await trialInbound(inboundId); } catch (e) { console.warn("[TRIAL] Inbound refresh:",e.message); }
