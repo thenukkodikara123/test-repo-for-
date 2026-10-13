@@ -1,0 +1,3110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#07050f">
+
+    <title>Aura Cloud — Premium V2Ray VPN</title>
+
+    <meta
+        name="description"
+        content="Aura Cloud is a premium V2Ray VPN with unlimited data, full protocol support and a low-latency global network."
+    >
+
+    <link
+        rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☁️</text></svg>"
+    >
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+
+        /* =========================================================
+           BASE
+        ========================================================= */
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family:
+                'Inter',
+                ui-sans-serif,
+                system-ui,
+                sans-serif;
+
+            background: #07050f;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        .font-display {
+            font-family: 'Sora', sans-serif;
+        }
+
+
+        /* =========================================================
+           MARQUEE
+        ========================================================= */
+
+        @keyframes marquee {
+            from {
+                transform: translateX(0);
+            }
+
+            to {
+                transform: translateX(-50%);
+            }
+        }
+
+        .marquee-track {
+            animation:
+                marquee 42s linear infinite;
+        }
+
+        .marquee-track:hover {
+            animation-play-state: paused;
+        }
+
+
+        /* =========================================================
+           HERO RING
+        ========================================================= */
+
+        @keyframes ringIn {
+            from {
+                opacity: 0;
+                transform: scale(.92);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .ring-in {
+            animation:
+                ringIn .7s ease-out both;
+        }
+
+
+        /* =========================================================
+           SPEED NEEDLE
+        ========================================================= */
+
+        #speedNeedle {
+            transition:
+                transform .08s linear;
+        }
+
+        .speed-needle-line {
+            position: absolute;
+            width: 4px;
+            height: 84px;
+            left: -2px;
+            bottom: 0;
+            border-radius: 999px;
+
+            background:
+                linear-gradient(
+                    to top,
+                    #a855f7 0%,
+                    #38bdf8 65%,
+                    #ffffff 100%
+                );
+
+            box-shadow:
+                0 0 8px rgba(56, 189, 248, .95),
+                0 0 18px rgba(168, 85, 247, .55);
+        }
+
+        .speed-needle-arrow {
+            position: absolute;
+
+            left: -9px;
+            top: -16px;
+
+            width: 0;
+            height: 0;
+
+            border-left: 9px solid transparent;
+            border-right: 9px solid transparent;
+            border-bottom: 19px solid #67e8f9;
+
+            filter:
+                drop-shadow(0 0 5px rgba(34, 211, 238, .95))
+                drop-shadow(0 0 12px rgba(56, 189, 248, .6));
+        }
+
+
+        /* =========================================================
+           ISP SECTION
+        ========================================================= */
+
+        .isp-section {
+            position: relative;
+        }
+
+        .isp-grid-glow {
+            position: absolute;
+            width: 420px;
+            height: 420px;
+            border-radius: 999px;
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(168, 85, 247, .10) 0%,
+                    rgba(56, 189, 248, .05) 35%,
+                    transparent 70%
+                );
+            filter: blur(30px);
+            pointer-events: none;
+        }
+
+        .isp-card {
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+        }
+
+        .isp-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(168, 85, 247, .08),
+                    transparent 45%,
+                    rgba(56, 189, 248, .05)
+                );
+            opacity: 0;
+            transition: opacity .35s ease;
+            z-index: -1;
+        }
+
+        .isp-card:hover::before {
+            opacity: 1;
+        }
+
+        .isp-card::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 70%;
+            height: 1px;
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(168, 85, 247, .8),
+                    rgba(56, 189, 248, .8),
+                    transparent
+                );
+            transition: left .6s ease;
+        }
+
+        .isp-card:hover::after {
+            left: 130%;
+        }
+
+        .isp-logo {
+            transition:
+                transform .35s ease,
+                filter .35s ease;
+        }
+
+        .isp-card:hover .isp-logo {
+            transform: scale(1.06);
+            filter:
+                drop-shadow(0 0 12px rgba(168, 85, 247, .25));
+        }
+
+        .isp-status {
+            box-shadow:
+                0 0 8px rgba(52, 211, 153, .7);
+        }
+
+
+        /* =========================================================
+           SCROLL DISCOVER
+        ========================================================= */
+
+        .scroll-discover {
+            animation:
+                discoverFloat 2s ease-in-out infinite;
+        }
+
+        @keyframes discoverFloat {
+            0%,
+            100% {
+                transform: translateY(0);
+                opacity: .65;
+            }
+
+            50% {
+                transform: translateY(7px);
+                opacity: 1;
+            }
+        }
+
+        .scroll-arrow {
+            animation:
+                arrowDown 1.5s ease-in-out infinite;
+        }
+
+        @keyframes arrowDown {
+            0% {
+                transform: translateY(-3px);
+                opacity: .4;
+            }
+
+            50% {
+                transform: translateY(4px);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-3px);
+                opacity: .4;
+            }
+        }
+
+
+        /* =========================================================
+           SCROLL REVEAL
+        ========================================================= */
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(45px);
+
+            transition:
+                opacity .8s cubic-bezier(.22, 1, .36, 1),
+                transform .8s cubic-bezier(.22, 1, .36, 1);
+        }
+
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-50px);
+
+            transition:
+                opacity .8s cubic-bezier(.22, 1, .36, 1),
+                transform .8s cubic-bezier(.22, 1, .36, 1);
+        }
+
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(50px);
+
+            transition:
+                opacity .8s cubic-bezier(.22, 1, .36, 1),
+                transform .8s cubic-bezier(.22, 1, .36, 1);
+        }
+
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(.92);
+
+            transition:
+                opacity .8s cubic-bezier(.22, 1, .36, 1),
+                transform .8s cubic-bezier(.22, 1, .36, 1);
+        }
+
+        .reveal.show,
+        .reveal-left.show,
+        .reveal-right.show,
+        .reveal-scale.show {
+            opacity: 1;
+            transform: translate(0) scale(1);
+        }
+
+
+        /* =========================================================
+           STAGGER ANIMATIONS
+        ========================================================= */
+
+        .stagger-1 {
+            transition-delay: .08s;
+        }
+
+        .stagger-2 {
+            transition-delay: .16s;
+        }
+
+        .stagger-3 {
+            transition-delay: .24s;
+        }
+
+        .stagger-4 {
+            transition-delay: .32s;
+        }
+
+        .stagger-5 {
+            transition-delay: .40s;
+        }
+
+
+        /* =========================================================
+           STAT GLOW
+        ========================================================= */
+
+        .stat-number {
+            text-shadow:
+                0 0 20px rgba(167, 139, 250, .08);
+        }
+
+
+        /* =========================================================
+           CUSTOM SCROLLBAR
+        ========================================================= */
+
+        ::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #07050f;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, .15);
+            border-radius: 999px;
+        }
+
+
+        /* =========================================================
+           REDUCED MOTION
+        ========================================================= */
+
+        @media (prefers-reduced-motion: reduce) {
+
+            html {
+                scroll-behavior: auto;
+            }
+
+            .marquee-track,
+            .ring-in,
+            .scroll-discover,
+            .scroll-arrow,
+            .animate-ping {
+                animation: none !important;
+            }
+
+            .reveal,
+            .reveal-left,
+            .reveal-right,
+            .reveal-scale {
+                opacity: 1 !important;
+                transform: none !important;
+                transition: none !important;
+            }
+
+            .isp-card::after {
+                display: none;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body class="font-sans antialiased">
+
+
+    <!-- ======================================================
+         HEADER
+    ======================================================= -->
+
+    <header
+        class="sticky top-0 z-50 border-b border-white/5 bg-[#07050f]/80 backdrop-blur-xl"
+    >
+
+        <div
+            class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between py-3.5"
+        >
+
+            <a href="#" class="flex items-center gap-3">
+
+                <img
+                    src="images/logo.webp"
+                    alt="Aura Cloud logo"
+                    class="h-9 w-9 object-contain"
+                >
+
+                <div class="leading-tight">
+
+                    <p
+                        class="font-display text-xs font-bold tracking-[0.1em] text-white uppercase"
+                    >
+                        Aura Cloud
+                    </p>
+
+                    <p
+                        class="text-[9px] text-slate-500 font-semibold uppercase tracking-wider"
+                    >
+                        V2Ray VPN Network
+                    </p>
+
+                </div>
+
+            </a>
+
+
+            <nav class="hidden md:flex items-center gap-1">
+
+                <a
+                    href="#why"
+                    class="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white rounded-full hover:bg-white/5 transition-colors"
+                >
+                    Why Us
+                </a>
+
+                <a
+                    href="#isps"
+                    class="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white rounded-full hover:bg-white/5 transition-colors"
+                >
+                    ISPs
+                </a>
+
+                <a
+                    href="#packages"
+                    class="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white rounded-full hover:bg-white/5 transition-colors"
+                >
+                    Packages
+                </a>
+
+                <a
+                    href="#reviews"
+                    class="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white rounded-full hover:bg-white/5 transition-colors"
+                >
+                    Reviews
+                </a>
+
+                <a
+                    href="#packages"
+                    class="px-4 py-2 text-sm font-semibold text-fuchsia-400 hover:bg-fuchsia-500/10 rounded-full transition-colors"
+                >
+                    Free trial
+                </a>
+
+            </nav>
+
+
+<div class="flex items-center gap-2 sm:gap-3">
+
+    <!-- GET STARTED BUTTON -->
+    <a
+        href="auth.html"
+        class="hidden sm:inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-600 px-4 py-2 text-[11px] font-bold text-white shadow-lg shadow-fuchsia-500/20 hover:brightness-110 hover:-translate-y-0.5 transition-all duration-300"
+    >
+        Get Started
+        <span class="text-xs">→</span>
+    </a>
+
+
+    <!-- LIVE STATUS -->
+    <span 
+        class="hidden sm:inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/5 px-3.5 py-1.5 text-[11px] font-bold text-emerald-400"
+    > 
+
+        <span class="relative flex h-1.5 w-1.5"> 
+
+            <span 
+                class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"
+            ></span> 
+
+            <span 
+                class="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400"
+            ></span> 
+
+        </span> 
+
+        Live 
+
+    </span>
+
+
+    <!-- MOBILE MENU -->
+    <button 
+        id="menuBtn" 
+        aria-label="Toggle menu" 
+        class="md:hidden p-2 rounded-xl bg-white/5 border border-white/10 text-slate-300"
+    > 
+        ☰ 
+    </button> 
+
+</div>
+
+        <nav
+            id="mobileMenu"
+            class="hidden md:hidden px-4 pb-4 space-y-1"
+        >
+
+            <a
+                href="#why"
+                class="block rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5"
+            >
+                Why Us
+            </a>
+
+            <a
+                href="#isps"
+                class="block rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5"
+            >
+                ISPs
+            </a>
+
+            <a
+                href="#packages"
+                class="block rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5"
+            >
+                Packages
+            </a>
+
+            <a
+                href="#reviews"
+                class="block rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5"
+            >
+                Reviews
+            </a>
+
+        </nav>
+
+    </header>
+
+
+    <main>
+
+
+        <!-- ======================================================
+             HERO
+        ======================================================= -->
+
+        <section
+            class="relative overflow-hidden pt-14 pb-20 px-4 sm:px-6"
+        >
+
+            <div class="pointer-events-none absolute inset-0 overflow-hidden">
+
+                <div
+                    class="absolute -top-32 -left-24 w-[520px] h-[520px] rounded-full bg-violet-600/10 blur-[130px]"
+                ></div>
+
+                <div
+                    class="absolute top-0 -right-32 w-[460px] h-[460px] rounded-full bg-fuchsia-600/10 blur-[130px]"
+                ></div>
+
+                <div
+                    class="absolute bottom-[-10%] left-1/3 w-[420px] h-[420px] rounded-full bg-cyan-500/10 blur-[130px]"
+                ></div>
+
+            </div>
+
+
+            <div
+                class="relative max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-14 items-center"
+            >
+
+
+                <div class="text-center lg:text-left reveal-left">
+
+                    <span
+                        class="inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/5 px-4 py-1.5 text-[11px] font-medium text-violet-300"
+                    >
+                        Start with 3 days free, no card needed
+                    </span>
+
+
+                    <h1
+                        class="font-display mt-6 text-4xl sm:text-5xl lg:text-[3.4rem] font-bold tracking-tight leading-[1.08]"
+                    >
+
+                        <span class="block text-white">
+                            Ordinary VPNs Stop Here.
+                        </span>
+
+                        <span
+                            class="block mt-1 bg-gradient-to-r from-violet-400 via-fuchsia-400 to-cyan-400 bg-clip-text text-transparent"
+                        >
+                            Welcome to the Aura Cloud.
+                        </span>
+
+                    </h1>
+
+
+                    <p
+                        class="mt-6 text-base sm:text-lg text-slate-400 max-w-md mx-auto lg:mx-0 leading-relaxed"
+                    >
+                        A premium V2Ray network built for speed, privacy and zero compromise — with truly unlimited data plans.
+                    </p>
+
+
+                    <div
+                        class="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-4"
+                    >
+
+                        <a
+                            href="auth.html"
+                            class="inline-flex justify-center items-center rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-600 px-8 py-3.5 text-sm font-semibold text-white shadow-xl shadow-fuchsia-500/20 hover:brightness-110 transition"
+                        >
+                            Start free trial
+                        </a>
+
+                        <a
+                            href="#packages"
+                            class="inline-flex justify-center items-center rounded-full border border-white/10 bg-white/5 px-7 py-3.5 text-sm font-semibold text-slate-300 hover:text-white hover:border-white/20 transition"
+                        >
+                            View plans
+                        </a>
+
+                    </div>
+
+
+                    <div
+                        class="mt-8 flex items-center justify-center lg:justify-start gap-2 text-sm text-slate-400"
+                    >
+
+                        <span class="text-amber-400 tracking-tight">
+                            ★★★★★
+                        </span>
+
+                        <span>
+                            4.9 / 5 from 2,000+ customers
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SPEED METER -->
+
+                <div
+                    class="flex flex-col items-center justify-center reveal-right"
+                >
+
+                    <div
+                        class="relative w-[270px] h-[270px] mx-auto"
+                    >
+
+                        <div
+                            id="speedRing"
+                            class="absolute inset-0 rounded-full"
+                            style="
+                                background:
+                                    conic-gradient(
+                                        from 225deg,
+                                        #a78bfa 0deg,
+                                        #22d3ee 200deg,
+                                        rgba(255,255,255,.05) 200deg 270deg,
+                                        transparent 270deg
+                                    );
+
+                                -webkit-mask:
+                                    radial-gradient(
+                                        circle,
+                                        transparent 0 72%,
+                                        #000 73% 100%
+                                    );
+
+                                mask:
+                                    radial-gradient(
+                                        circle,
+                                        transparent 0 72%,
+                                        #000 73% 100%
+                                    );
+                            "
+                        ></div>
+
+
+                        <div class="absolute inset-0 pointer-events-none">
+
+                            <span
+                                class="absolute left-[20px] top-[165px] text-[9px] text-slate-600"
+                            >
+                                50
+                            </span>
+
+                            <span
+                                class="absolute left-[57px] top-[65px] text-[9px] text-slate-600"
+                            >
+                                200
+                            </span>
+
+                            <span
+                                class="absolute left-1/2 -translate-x-1/2 top-[18px] text-[9px] text-slate-600"
+                            >
+                                400
+                            </span>
+
+                            <span
+                                class="absolute right-[52px] top-[65px] text-[9px] text-slate-600"
+                            >
+                                600
+                            </span>
+
+                            <span
+                                class="absolute right-[18px] top-[165px] text-[9px] text-slate-600"
+                            >
+                                800
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            id="speedNeedle"
+                            class="absolute left-1/2 top-1/2 z-[5] pointer-events-none"
+                            style="
+                                width:0;
+                                height:0;
+                                transform-origin:0 0;
+                                transform:rotate(-119deg);
+                            "
+                        >
+
+                            <div class="speed-needle-line"></div>
+
+                            <div class="speed-needle-arrow"></div>
+
+                        </div>
+
+
+                        <div
+                            class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-[155px] h-[155px] rounded-full bg-[#0b0817] border border-white/[0.07] flex flex-col items-center justify-center"
+                            style="
+                                box-shadow:
+                                    inset 0 0 35px rgba(0,0,0,.85),
+                                    0 0 25px rgba(0,0,0,.4);
+                            "
+                        >
+
+                            <div
+                                class="flex items-center gap-2 mb-3"
+                            >
+
+                                <span
+                                    class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"
+                                    style="
+                                        box-shadow:
+                                            0 0 9px rgba(52,211,153,.9);
+                                    "
+                                ></span>
+
+                                <span
+                                    class="text-[10px] uppercase tracking-[0.25em] font-semibold text-emerald-400"
+                                >
+                                    LIVE
+                                </span>
+
+                            </div>
+
+
+                            <div
+                                class="flex items-baseline justify-center leading-none"
+                            >
+
+                                <span
+                                    id="speedNum"
+                                    class="font-display text-[34px] font-bold text-white tabular-nums"
+                                >
+                                    96
+                                </span>
+
+                                <span
+                                    class="ml-1 text-[10px] uppercase tracking-widest text-slate-500"
+                                >
+                                    Mbps
+                                </span>
+
+                            </div>
+
+
+                            <span
+                                class="mt-3 text-[8px] uppercase tracking-[0.2em] text-slate-600"
+                            >
+                                Network Speed
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[3] w-6 h-6 rounded-full bg-[#090713] border-[3px] border-cyan-300"
+                            style="
+                                box-shadow:
+                                    0 0 10px rgba(34,211,238,.9),
+                                    0 0 22px rgba(34,211,238,.35);
+                            "
+                        ></div>
+
+                    </div>
+
+
+                    <p class="text-xs text-slate-500 text-center mt-1">
+                        Connected · Singapore node
+                    </p>
+
+
+                    <a
+                        href="#reviews"
+                        class="scroll-discover mt-8 flex flex-col items-center gap-2 text-slate-500 hover:text-slate-300 transition-colors"
+                    >
+
+                        <span
+                            class="text-[9px] uppercase tracking-[0.28em]"
+                        >
+                            Scroll to discover more
+                        </span>
+
+                        <span
+                            class="scroll-arrow text-lg leading-none"
+                        >
+                            ↓
+                        </span>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ======================================================
+             REVIEWS
+        ======================================================= -->
+
+        <section
+            id="reviews"
+            class="relative border-y border-white/5 py-16 overflow-hidden reveal"
+        >
+
+            <div
+                class="max-w-3xl mx-auto px-4 text-center mb-10"
+            >
+
+                <h2
+                    class="font-display text-xl sm:text-2xl font-bold text-white"
+                >
+                    Loved by customers worldwide
+                </h2>
+
+                <p class="mt-2 text-sm text-slate-500">
+                    A few words from people already on the Aura Cloud.
+                </p>
+
+            </div>
+
+
+            <div class="relative overflow-hidden">
+
+                <div
+                    class="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-32 bg-gradient-to-r from-[#07050f] to-transparent z-10"
+                ></div>
+
+                <div
+                    class="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-32 bg-gradient-to-l from-[#07050f] to-transparent z-10"
+                ></div>
+
+                <div
+                    id="reviewTrack"
+                    class="flex gap-4 marquee-track w-max px-4"
+                ></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ======================================================
+             STATS
+        ======================================================= -->
+
+        <section
+            id="statsSection"
+            class="border-b border-white/5 py-14 reveal"
+        >
+
+            <div
+                class="max-w-5xl mx-auto px-4 grid grid-cols-2 lg:grid-cols-4 gap-8"
+            >
+
+                <div class="text-center reveal stagger-1">
+
+                    <p
+                        class="font-display text-2xl sm:text-3xl font-bold text-white stat-number"
+                    >
+
+                        <span
+                            class="counter"
+                            data-target="99.9"
+                            data-decimals="1"
+                        >
+                            0
+                        </span>%
+
+                    </p>
+
+                    <p
+                        class="mt-1.5 text-[10px] text-slate-500 font-semibold uppercase tracking-[0.2em]"
+                    >
+                        Uptime SLA
+                    </p>
+
+                </div>
+
+
+                <div
+                    class="text-center lg:border-l lg:border-white/5 reveal stagger-2"
+                >
+
+                    <p
+                        class="font-display text-2xl sm:text-3xl font-bold text-white stat-number"
+                    >
+
+                        &lt;<span
+                            class="counter"
+                            data-target="10"
+                            data-decimals="0"
+                        >0</span>ms
+
+                    </p>
+
+                    <p
+                        class="mt-1.5 text-[10px] text-slate-500 font-semibold uppercase tracking-[0.2em]"
+                    >
+                        Avg latency
+                    </p>
+
+                </div>
+
+
+                <div
+                    class="text-center lg:border-l lg:border-white/5 reveal stagger-3"
+                >
+
+                    <p
+                        class="font-display text-2xl sm:text-3xl font-bold text-white stat-number"
+                    >
+
+                        &lt;<span
+                            class="counter"
+                            data-target="30"
+                            data-decimals="0"
+                        >0</span>s
+
+                    </p>
+
+                    <p
+                        class="mt-1.5 text-[10px] text-slate-500 font-semibold uppercase tracking-[0.2em]"
+                    >
+                        Setup time
+                    </p>
+
+                </div>
+
+
+                <div
+                    class="text-center lg:border-l lg:border-white/5 reveal stagger-4"
+                >
+
+                    <p
+                        class="font-display text-2xl sm:text-3xl font-bold text-white stat-number"
+                    >
+
+                        <span
+                            class="counter"
+                            data-target="0"
+                            data-decimals="0"
+                        >
+                            0
+                        </span>
+
+                    </p>
+
+                    <p
+                        class="mt-1.5 text-[10px] text-slate-500 font-semibold uppercase tracking-[0.2em]"
+                    >
+                        Logs kept
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ======================================================
+             WHY AURA CLOUD
+        ======================================================= -->
+
+        <section
+            id="why"
+            class="max-w-5xl mx-auto px-4 sm:px-6 py-24"
+        >
+
+            <div class="text-center mb-14 reveal">
+
+                <p
+                    class="text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-500"
+                >
+                    Why Aura Cloud
+                </p>
+
+                <h2
+                    class="font-display mt-3 text-3xl sm:text-4xl font-bold text-white"
+                >
+                    Everything you need.
+
+                    <span class="text-slate-600">
+                        For affordable prices
+                    </span>
+                </h2>
+
+            </div>
+
+
+            <div
+                class="grid gap-4 md:grid-cols-[1.6fr_1fr] md:grid-rows-2"
+            >
+
+                <article
+                    class="md:row-span-2 rounded-2xl border border-white/10 bg-white/[0.02] p-8 sm:p-10 reveal-left"
+                >
+
+                    <div class="text-3xl mb-6">
+                        ⚡
+                    </div>
+
+                    <h3
+                        class="font-display text-2xl font-bold text-white"
+                    >
+                        Unlimited data
+                    </h3>
+
+                    <p
+                        class="mt-3 text-sm text-slate-400 max-w-sm leading-relaxed"
+                    >
+                        No data limits, no throttling, and no downtime. Enjoy unlimited browsing with a simple, transparent price.
+                    </p>
+
+                    <span
+                        class="block mt-10 select-none text-6xl sm:text-7xl font-black text-white/5"
+                    >
+                        ∞ GB
+                    </span>
+
+                </article>
+
+
+                <article
+                    class="rounded-2xl border border-white/10 bg-white/[0.02] p-6 reveal-right stagger-1"
+                >
+
+                    <div class="text-2xl mb-4">
+                        🛡️
+                    </div>
+
+                    <h3 class="text-base font-bold text-white">
+                        Every protocol
+                    </h3>
+
+                    <p
+                        class="mt-1.5 text-xs text-slate-400 leading-relaxed"
+                    >
+                        The full V2Ray suite for maximum compatibility and speed.
+                    </p>
+
+                    <div class="mt-4 flex flex-wrap gap-1.5">
+
+                        <span
+                            class="rounded-md border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-semibold text-slate-400"
+                        >
+                            VMESS-TLS
+                        </span>
+
+                        <span
+                            class="rounded-md border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-semibold text-slate-400"
+                        >
+                            VLESS REALITY
+                        </span>
+
+                        <span
+                            class="rounded-md border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-semibold text-slate-400"
+                        >
+                            Shadowsocks
+                        </span>
+
+                    </div>
+
+                </article>
+
+
+                <article
+                    class="rounded-2xl border border-white/10 bg-white/[0.02] p-6 reveal-right stagger-2"
+                >
+
+                    <div class="text-2xl mb-4">
+                        🌐
+                    </div>
+
+                    <h3 class="text-base font-bold text-white">
+                        Global edge network
+                    </h3>
+
+                    <p
+                        class="mt-1.5 text-xs text-slate-400 leading-relaxed"
+                    >
+                        Low-latency nodes placed across every major region.
+                    </p>
+
+                    <div
+                        class="mt-4 flex flex-wrap gap-x-3 gap-y-1.5 text-[11px] text-slate-500 font-medium"
+                    >
+
+                        <span>🇺🇸 US</span>
+                        <span>🇬🇧 UK</span>
+                        <span>🇸🇬 SG</span>
+                        <span>🇯🇵 JP</span>
+                        <span>🇩🇪 DE</span>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+
+            <div class="grid gap-4 md:grid-cols-2 mt-4">
+
+                <article
+                    class="rounded-2xl border border-white/10 bg-white/[0.02] p-6 reveal-left stagger-1"
+                >
+
+                    <div class="text-2xl mb-4">
+                        🔒
+                    </div>
+
+                    <h3 class="text-base font-bold text-white">
+Strong Security
+                    </h3>
+
+                    <p
+                        class="mt-1.5 text-xs text-slate-400 leading-relaxed"
+                    >
+Your connection stays private, your data stays yours. Always.
+                    </p>
+
+                </article>
+
+
+                <article
+                    class="rounded-2xl border border-white/10 bg-white/[0.02] p-6 reveal-right stagger-2"
+                >
+
+                    <div class="flex items-center gap-3 mb-4">
+
+                        <span class="text-2xl">
+                            📶
+                        </span>
+
+                        <span class="relative flex h-2 w-2">
+
+                            <span
+                                class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60"
+                            ></span>
+
+                            <span
+                                class="relative inline-flex h-2 w-2 rounded-full bg-emerald-400"
+                            ></span>
+
+                        </span>
+
+                    </div>
+
+                    <h3 class="text-base font-bold text-white">
+                        Always on
+                    </h3>
+
+                    <p
+                        class="mt-1.5 text-xs text-slate-400 leading-relaxed"
+                    >
+                        99.9% uptime backed by 24/7 automated monitoring and instant failover.
+                    </p>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- ======================================================
+             BUILT FOR LOCAL ISPs
+        ======================================================= -->
+
+        <section
+            id="isps"
+            class="isp-section relative border-y border-white/5 py-24 overflow-hidden"
+        >
+
+            <!-- Background atmosphere -->
+
+            <div
+                class="pointer-events-none absolute -top-40 -left-40 isp-grid-glow"
+            ></div>
+
+            <div
+                class="pointer-events-none absolute -bottom-40 -right-40 isp-grid-glow"
+            ></div>
+
+
+            <div class="relative max-w-6xl mx-auto px-4 sm:px-6">
+
+
+                <!-- Heading -->
+
+                <div class="text-center max-w-3xl mx-auto mb-14 reveal">
+
+                    <div
+                        class="inline-flex items-center gap-2 rounded-full border border-cyan-500/15 bg-cyan-500/[0.04] px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-cyan-300"
+                    >
+
+                        <span
+                            class="relative flex h-1.5 w-1.5"
+                        >
+
+                            <span
+                                class="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-60"
+                            ></span>
+
+                            <span
+                                class="relative inline-flex h-1.5 w-1.5 rounded-full bg-cyan-400"
+                            ></span>
+
+                        </span>
+
+                        Sri Lanka Network Compatibility
+
+                    </div>
+
+
+                    <h2
+                        class="font-display mt-5 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white"
+                    >
+
+                        Built for your
+
+                        <span
+                            class="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-cyan-400 bg-clip-text text-transparent"
+                        >
+                            local ISP.
+                        </span>
+
+                    </h2>
+
+
+                    <p
+                        class="mt-5 text-sm sm:text-base text-slate-500 max-w-2xl mx-auto leading-relaxed"
+                    >
+                        Aura Cloud is designed with Sri Lankan connections in mind,
+                        giving you one V2Ray service that works across the networks
+                        you already use.
+                    </p>
+
+                </div>
+
+
+                <!-- ISP NETWORK LINE -->
+
+                <div
+                    class="hidden md:flex items-center justify-center mb-10 reveal-scale"
+                >
+
+                    <div class="h-px w-20 bg-gradient-to-r from-transparent to-violet-500/40"></div>
+
+                    <div
+                        class="mx-3 h-2 w-2 rounded-full bg-violet-400"
+                        style="
+                            box-shadow:
+                                0 0 12px rgba(168,85,247,.8);
+                        "
+                    ></div>
+
+                    <div
+                        class="h-px w-32 bg-gradient-to-r from-violet-500/40 via-fuchsia-500/30 to-cyan-500/40"
+                    ></div>
+
+                    <div
+                        class="mx-3 h-2 w-2 rounded-full bg-cyan-400"
+                        style="
+                            box-shadow:
+                                0 0 12px rgba(34,211,238,.8);
+                        "
+                    ></div>
+
+                    <div class="h-px w-20 bg-gradient-to-l from-transparent to-cyan-500/40"></div>
+
+                </div>
+
+
+                <!-- ISP CARDS -->
+
+                <div
+                    class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4"
+                >
+
+
+                    <!-- SLT -->
+
+                    <article
+                        class="isp-card reveal-scale stagger-1 rounded-2xl border border-white/10 bg-white/[0.025] backdrop-blur-xl p-5 sm:p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-violet-400/30 hover:bg-violet-500/[0.035]"
+                    >
+
+                        <div
+                            class="isp-logo h-16 flex items-center justify-center"
+                        >
+
+                            <span
+                                class="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-white"
+                            >
+                                SLT
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="mt-4 pt-4 border-t border-white/5"
+                        >
+
+                            <div
+                                class="flex items-center justify-center gap-2"
+                            >
+
+                                <span
+                                    class="isp-status h-1.5 w-1.5 rounded-full bg-emerald-400"
+                                ></span>
+
+                                <span
+                                    class="text-xs font-semibold text-slate-300"
+                                >
+                                    Sri Lanka Telecom
+                                </span>
+
+                            </div>
+
+                            <p
+                                class="mt-2 text-[9px] uppercase tracking-[0.18em] text-slate-600"
+                            >
+                                Fiber & Broadband
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- MOBITEL -->
+
+                    <article
+                        class="isp-card reveal-scale stagger-2 rounded-2xl border border-white/10 bg-white/[0.025] backdrop-blur-xl p-5 sm:p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-violet-400/30 hover:bg-violet-500/[0.035]"
+                    >
+
+                        <div
+                            class="isp-logo h-16 flex items-center justify-center"
+                        >
+
+                            <span
+                                class="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-white"
+                            >
+                                Mobitel
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="mt-4 pt-4 border-t border-white/5"
+                        >
+
+                            <div
+                                class="flex items-center justify-center gap-2"
+                            >
+
+                                <span
+                                    class="isp-status h-1.5 w-1.5 rounded-full bg-emerald-400"
+                                ></span>
+
+                                <span
+                                    class="text-xs font-semibold text-slate-300"
+                                >
+                                    Mobitel
+                                </span>
+
+                            </div>
+
+                            <p
+                                class="mt-2 text-[9px] uppercase tracking-[0.18em] text-slate-600"
+                            >
+                                Mobile Network
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- DIALOG -->
+
+                    <article
+                        class="isp-card reveal-scale stagger-3 rounded-2xl border border-white/10 bg-white/[0.025] backdrop-blur-xl p-5 sm:p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-fuchsia-400/30 hover:bg-fuchsia-500/[0.035]"
+                    >
+
+                        <div
+                            class="isp-logo h-16 flex items-center justify-center"
+                        >
+
+                            <span
+                                class="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-white"
+                            >
+                                Dialog
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="mt-4 pt-4 border-t border-white/5"
+                        >
+
+                            <div
+                                class="flex items-center justify-center gap-2"
+                            >
+
+                                <span
+                                    class="isp-status h-1.5 w-1.5 rounded-full bg-emerald-400"
+                                ></span>
+
+                                <span
+                                    class="text-xs font-semibold text-slate-300"
+                                >
+                                    Dialog
+                                </span>
+
+                            </div>
+
+                            <p
+                                class="mt-2 text-[9px] uppercase tracking-[0.18em] text-slate-600"
+                            >
+                                Mobile & Broadband
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- HUTCH -->
+
+                    <article
+                        class="isp-card reveal-scale stagger-4 rounded-2xl border border-white/10 bg-white/[0.025] backdrop-blur-xl p-5 sm:p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-violet-400/30 hover:bg-violet-500/[0.035]"
+                    >
+
+                        <div
+                            class="isp-logo h-16 flex items-center justify-center"
+                        >
+
+                            <span
+                                class="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-white"
+                            >
+                                HUTCH
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="mt-4 pt-4 border-t border-white/5"
+                        >
+
+                            <div
+                                class="flex items-center justify-center gap-2"
+                            >
+
+                                <span
+                                    class="isp-status h-1.5 w-1.5 rounded-full bg-emerald-400"
+                                ></span>
+
+                                <span
+                                    class="text-xs font-semibold text-slate-300"
+                                >
+                                    Hutch
+                                </span>
+
+                            </div>
+
+                            <p
+                                class="mt-2 text-[9px] uppercase tracking-[0.18em] text-slate-600"
+                            >
+                                Mobile Network
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- AIRTEL -->
+
+                    <article
+                        class="isp-card reveal-scale stagger-5 rounded-2xl border border-white/10 bg-white/[0.025] backdrop-blur-xl p-5 sm:p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-cyan-400/30 hover:bg-cyan-500/[0.035]"
+                    >
+
+                        <div
+                            class="isp-logo h-16 flex items-center justify-center"
+                        >
+
+                            <span
+                                class="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-white"
+                            >
+                                Airtel
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="mt-4 pt-4 border-t border-white/5"
+                        >
+
+                            <div
+                                class="flex items-center justify-center gap-2"
+                            >
+
+                                <span
+                                    class="isp-status h-1.5 w-1.5 rounded-full bg-emerald-400"
+                                ></span>
+
+                                <span
+                                    class="text-xs font-semibold text-slate-300"
+                                >
+                                    Airtel
+                                </span>
+
+                            </div>
+
+                            <p
+                                class="mt-2 text-[9px] uppercase tracking-[0.18em] text-slate-600"
+                            >
+                                Mobile Network
+                            </p>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+
+                <!-- BOTTOM NETWORK MESSAGE -->
+
+                <div
+                    class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 text-center reveal"
+                >
+
+                    <div
+                        class="flex items-center gap-2 rounded-full border border-white/5 bg-white/[0.02] px-4 py-2"
+                    >
+
+                        <span
+                            class="text-cyan-400 text-xs"
+                        >
+                            ◈
+                        </span>
+
+                        <span
+                            class="text-[10px] font-medium uppercase tracking-[0.18em] text-slate-500"
+                        >
+                            One Aura Cloud connection
+                        </span>
+
+                    </div>
+
+
+                    <span
+                        class="hidden sm:block text-slate-700"
+                    >
+                        →
+                    </span>
+
+
+                    <div
+                        class="flex items-center gap-2 rounded-full border border-white/5 bg-white/[0.02] px-4 py-2"
+                    >
+
+                        <span
+                            class="text-violet-400 text-xs"
+                        >
+                            ✦
+                        </span>
+
+                        <span
+                            class="text-[10px] font-medium uppercase tracking-[0.18em] text-slate-500"
+                        >
+                            Multiple local networks
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <p
+                    class="mt-7 text-center text-[10px] text-slate-600"
+                >
+                    Network compatibility may vary by location, network conditions and routing.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ======================================================
+             READY
+        ======================================================= -->
+
+        <section
+            class="max-w-5xl mx-auto px-4 sm:px-6 py-20 border-t border-white/5"
+        >
+
+            <div class="text-center mb-16 reveal">
+
+                <h2
+                    class="font-display text-3xl sm:text-4xl font-bold text-white"
+                >
+                    Ready in just a moment
+                </h2>
+
+            </div>
+
+
+            <div
+                class="grid sm:grid-cols-2 lg:grid-cols-4 gap-10"
+            >
+
+                <div class="text-center lg:text-left reveal stagger-1">
+
+                    <div
+                        class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-violet-500/25 bg-violet-500/10 text-xs font-bold text-violet-300 mb-5"
+                    >
+                        01
+                    </div>
+
+                    <h4 class="text-sm font-bold text-white">
+                        Choose your plan
+                    </h4>
+
+                    <p
+                        class="mt-2 text-xs text-slate-400 leading-relaxed"
+                    >
+                        Pick the V2Ray plan that fits your needs.
+                    </p>
+
+                </div>
+
+
+                <div class="text-center lg:text-left reveal stagger-2">
+
+                    <div
+                        class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-violet-500/25 bg-violet-500/10 text-xs font-bold text-violet-300 mb-5"
+                    >
+                        02
+                    </div>
+
+                    <h4 class="text-sm font-bold text-white">
+                        Complete payment
+                    </h4>
+
+                    <p
+                        class="mt-2 text-xs text-slate-400 leading-relaxed"
+                    >
+                        Pay securely using your preferred payment method.
+                    </p>
+
+                </div>
+
+
+                <div class="text-center lg:text-left reveal stagger-3">
+
+                    <div
+                        class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-violet-500/25 bg-violet-500/10 text-xs font-bold text-violet-300 mb-5"
+                    >
+                        03
+                    </div>
+
+                    <h4 class="text-sm font-bold text-white">
+                        Get provisioned
+                    </h4>
+
+                    <p
+                        class="mt-2 text-xs text-slate-400 leading-relaxed"
+                    >
+                        Your V2Ray configuration is prepared automatically after payment.
+                    </p>
+
+                </div>
+
+
+                <div class="text-center lg:text-left reveal stagger-4">
+
+                    <div
+                        class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-violet-500/25 bg-violet-500/10 text-xs font-bold text-violet-300 mb-5"
+                    >
+                        04
+                    </div>
+
+                    <h4 class="text-sm font-bold text-white">
+                        Connect & go
+                    </h4>
+
+                    <p
+                        class="mt-2 text-xs text-slate-400 leading-relaxed"
+                    >
+                        Scan your QR code or use the config connect, and start browsing.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ======================================================
+             PACKAGES
+        ======================================================= -->
+
+        <section
+            id="packages"
+            class="max-w-6xl mx-auto px-4 sm:px-6 py-24"
+        >
+
+            <div class="text-center mb-14 reveal">
+
+                <p
+                    class="text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-500"
+                >
+                    Pricing
+                </p>
+
+                <h2
+                    class="font-display mt-3 text-3xl sm:text-4xl font-bold text-white"
+                >
+                    Affordable pricing.For The Best.
+
+                    <span class="text-slate-600">
+                        
+                    </span>
+                </h2>
+
+                <p
+                    class="mt-4 text-sm text-slate-400 max-w-xl mx-auto leading-relaxed"
+                >
+                    Every plan includes full protocol access — VMESS, VLESS REALITY and Shadowsocks. Still deciding? Start with the free trial.
+                </p>
+
+            </div>
+
+
+            <div
+                id="pricingGrid"
+                class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
+            ></div>
+
+        </section>
+
+
+        <!-- ======================================================
+             CTA
+        ======================================================= -->
+
+        <section
+            class="max-w-5xl mx-auto px-4 sm:px-6 pb-24"
+        >
+
+            <div
+                class="relative overflow-hidden rounded-3xl border border-violet-500/15 bg-gradient-to-br from-violet-950/30 via-[#0d0a1a] to-fuchsia-950/20 p-10 sm:p-16 text-center reveal-scale"
+            >
+
+                <div
+                    class="pointer-events-none absolute -top-20 -right-20 h-56 w-56 rounded-full bg-fuchsia-500/10 blur-[100px]"
+                ></div>
+
+                <div
+                    class="pointer-events-none absolute -bottom-14 -left-14 h-40 w-40 rounded-full bg-cyan-500/10 blur-[90px]"
+                ></div>
+
+
+                <div class="relative z-10">
+
+                    <h2
+                        class="font-display text-3xl sm:text-4xl font-bold text-white"
+                    >
+                        Not convinced?
+
+                        <span class="text-fuchsia-400">
+                            Try it free.
+                        </span>
+                    </h2>
+
+
+                    <p
+                        class="mt-4 text-sm text-slate-400 max-w-md mx-auto leading-relaxed"
+                    >
+                        Full premium access for 3 days. No card, no commitment — just fast, unrestricted internet.
+                    </p>
+
+
+                    <div
+                        class="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-fuchsia-300/70 font-semibold"
+                    >
+
+                        <span>
+                            ✓ No payment required
+                        </span>
+
+                        <span>
+                            ✓ Full access
+                        </span>
+
+                        <span>
+                            ✓ Cancel anytime
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        class="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 max-w-sm sm:max-w-none mx-auto"
+                    >
+
+                        <a
+                            href="auth.html"
+                            class="inline-flex justify-center items-center rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-600 px-9 py-3.5 text-sm font-semibold text-white shadow-xl shadow-fuchsia-500/15 hover:brightness-110 transition"
+                        >
+                            Start your free trial
+                        </a>
+
+                        <a
+                            href="#"
+                            class="inline-flex justify-center items-center rounded-full border border-white/10 bg-white/5 px-6 py-3.5 text-sm font-medium text-slate-400 hover:text-white transition"
+                        >
+                            Contact support
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ======================================================
+         FOOTER
+    ======================================================= -->
+
+    <footer
+        class="border-t border-white/5 bg-black/30"
+    >
+
+        <div
+            class="max-w-7xl mx-auto px-4 sm:px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-10 items-center"
+        >
+
+            <div
+                class="flex flex-col items-center md:items-start gap-3"
+            >
+
+                <div class="flex items-center gap-3">
+
+                    <img
+                        src="images/logo.webp"
+                        alt="Aura Cloud logo"
+                        class="h-9 object-contain"
+                    >
+
+                    <div>
+
+                        <p
+                            class="font-display text-xs font-bold uppercase tracking-wider text-white"
+                        >
+                            Aura Cloud
+                        </p>
+
+                        <p
+                            class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider"
+                        >
+                            V2Ray VPN Network
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <p
+                    class="text-xs text-slate-600 text-center md:text-left max-w-[240px] leading-relaxed"
+                >
+                    Fast, private, unlimited V2Ray VPN for a genuinely borderless internet.
+                </p>
+
+            </div>
+
+
+            <div
+                class="flex flex-col items-center gap-3"
+            >
+
+                <p
+                    class="text-[10px] uppercase tracking-wider text-slate-600 font-bold"
+                >
+                    Secure payments
+                </p>
+
+
+                <div
+                    class="flex flex-wrap justify-center gap-3"
+                >
+
+                    <span
+                        class="h-9 px-3.5 rounded border border-white/10 flex items-center text-[11px] font-bold tracking-wide text-slate-400"
+                    >
+                        VISA
+                    </span>
+
+                    <span
+                        class="h-9 px-3.5 rounded border border-white/10 flex items-center text-[11px] font-bold tracking-wide text-slate-400"
+                    >
+                        MASTERCARD
+                    </span>
+
+                    <span
+                        class="h-9 px-3.5 rounded border border-white/10 flex items-center text-[11px] font-bold tracking-wide text-slate-400"
+                    >
+                        PAYPAL
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="flex flex-col items-center md:items-end gap-3"
+            >
+
+                <div
+                    class="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-2 text-sm text-slate-400 font-medium"
+                >
+
+                    <a
+                        href="#"
+                        class="hover:text-white transition-colors"
+                    >
+                        Terms
+                    </a>
+
+                    <a
+                        href="#"
+                        class="hover:text-white transition-colors"
+                    >
+                        Privacy
+                    </a>
+
+                    <a
+                        href="#"
+                        class="hover:text-white transition-colors"
+                    >
+                        Refunds
+                    </a>
+
+                    <a
+                        href="#"
+                        class="hover:text-white transition-colors"
+                    >
+                        Support
+                    </a>
+
+                </div>
+
+
+                <p class="text-[11px] text-slate-600">
+                    © 2026 Aura Cloud. All rights reserved.
+                </p>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <!-- ======================================================
+         JAVASCRIPT
+    ======================================================= -->
+
+    <script>
+
+        /* =========================================================
+           MOBILE MENU
+        ========================================================= */
+
+        const menuBtn =
+            document.getElementById('menuBtn');
+
+        const mobileMenu =
+            document.getElementById('mobileMenu');
+
+
+        if (menuBtn && mobileMenu) {
+
+            menuBtn.addEventListener(
+                'click',
+                function () {
+
+                    mobileMenu.classList.toggle(
+                        'hidden'
+                    );
+
+                }
+            );
+
+
+            document
+                .querySelectorAll('#mobileMenu a')
+                .forEach(function (link) {
+
+                    link.addEventListener(
+                        'click',
+                        function () {
+
+                            mobileMenu.classList.add(
+                                'hidden'
+                            );
+
+                        }
+                    );
+
+                });
+
+        }
+
+
+        /* =========================================================
+           AURA CLOUD SPEED METER
+        ========================================================= */
+
+        (function () {
+
+            const speedEl =
+                document.getElementById(
+                    'speedNum'
+                );
+
+            const needleEl =
+                document.getElementById(
+                    'speedNeedle'
+                );
+
+            const ringEl =
+                document.getElementById(
+                    'speedRing'
+                );
+
+
+            if (
+                !speedEl ||
+                !needleEl ||
+                !ringEl
+            ) {
+
+                console.error(
+                    'Aura Cloud speed meter elements not found.'
+                );
+
+                return;
+
+            }
+
+
+            const MIN_SPEED = 50;
+            const MAX_SPEED = 800;
+
+
+            let currentSpeed = 96;
+            let targetSpeed = 210;
+
+
+            function clamp(
+                value,
+                min,
+                max
+            ) {
+
+                return Math.max(
+                    min,
+                    Math.min(
+                        max,
+                        value
+                    )
+                );
+
+            }
+
+
+            function speedToAngle(
+                speed
+            ) {
+
+                const ratio =
+                    (
+                        speed -
+                        MIN_SPEED
+                    ) /
+                    (
+                        MAX_SPEED -
+                        MIN_SPEED
+                    );
+
+
+                return (
+                    -135 +
+                    ratio * 270
+                );
+
+            }
+
+
+            function updateRing(
+                speed
+            ) {
+
+                const ratio =
+                    clamp(
+                        (
+                            speed -
+                            MIN_SPEED
+                        ) /
+                        (
+                            MAX_SPEED -
+                            MIN_SPEED
+                        ),
+                        0,
+                        1
+                    );
+
+
+                const degrees =
+                    ratio * 270;
+
+
+                const secondColor =
+                    Math.max(
+                        25,
+                        degrees * .45
+                    );
+
+
+                ringEl.style.background =
+                    `
+                    conic-gradient(
+                        from 225deg,
+
+                        #a78bfa 0deg,
+
+                        #c084fc ${secondColor}deg,
+
+                        #22d3ee ${degrees}deg,
+
+                        rgba(255,255,255,.05)
+                        ${degrees}deg 270deg,
+
+                        transparent 270deg
+                    )
+                    `;
+
+            }
+
+
+            function chooseNextTarget() {
+
+                const goingUp =
+                    Math.random() > 0.43;
+
+
+                const change =
+                    45 +
+                    Math.random() * 105;
+
+
+                if (goingUp) {
+
+                    targetSpeed =
+                        currentSpeed +
+                        change;
+
+                } else {
+
+                    targetSpeed =
+                        currentSpeed -
+                        change;
+
+                }
+
+
+                targetSpeed =
+                    clamp(
+                        targetSpeed,
+                        MIN_SPEED,
+                        MAX_SPEED
+                    );
+
+
+                if (
+                    currentSpeed < 110
+                ) {
+
+                    targetSpeed =
+                        180 +
+                        Math.random() * 100;
+
+                }
+
+
+                if (
+                    currentSpeed > 750
+                ) {
+
+                    targetSpeed =
+                        620 +
+                        Math.random() * 80;
+
+                }
+
+            }
+
+
+            function animateSpeed() {
+
+                const difference =
+                    targetSpeed -
+                    currentSpeed;
+
+
+                currentSpeed +=
+                    difference * 0.012;
+
+
+                if (
+                    Math.abs(
+                        difference
+                    ) < 0.15
+                ) {
+
+                    currentSpeed =
+                        targetSpeed;
+
+                }
+
+
+                speedEl.textContent =
+                    Math.round(
+                        currentSpeed
+                    );
+
+
+                const angle =
+                    speedToAngle(
+                        currentSpeed
+                    );
+
+
+                needleEl.style.transform =
+                    `rotate(${angle}deg)`;
+
+
+                updateRing(
+                    currentSpeed
+                );
+
+
+                requestAnimationFrame(
+                    animateSpeed
+                );
+
+            }
+
+
+            setInterval(
+                function () {
+
+                    chooseNextTarget();
+
+                },
+                3200
+            );
+
+
+            chooseNextTarget();
+
+            requestAnimationFrame(
+                animateSpeed
+            );
+
+        })();
+
+
+        /* =========================================================
+           CUSTOMER REVIEWS
+        ========================================================= */
+
+        const reviews = [
+
+            {
+                name: "Apothis",
+                init: "AP",
+                stars: 5,
+                quote: "Fast V2Ray service and really smooth connections."
+            },
+
+            {
+                name: "Pixel Dreams",
+                init: "PD",
+                stars: 5,
+                quote: "Aura Cloud has been extremely simple to set up."
+            },
+
+            {
+                name: "Vizhal",
+                init: "VZ",
+                stars: 5,
+                quote: "Really good speeds and stable connections."
+            },
+
+            {
+                name: "Xnote",
+                init: "XN",
+                stars: 5,
+                quote: "The setup was quick and the connection feels reliable."
+            },
+
+            {
+                name: "Void Runner",
+                init: "VR",
+                stars: 4,
+                quote: "Great speeds and the setup is very straightforward."
+            },
+
+            {
+                name: "Crimson Fox",
+                init: "CF",
+                stars: 5,
+                quote: "Stable connection during long gaming sessions."
+            },
+
+            {
+                name: "ByteStorm",
+                init: "BS",
+                stars: 5,
+                quote: "Support was quick and helped with my configuration."
+            },
+
+            {
+                name: "Luna Waves",
+                init: "LW",
+                stars: 5,
+                quote: "Clean service and a very easy connection process."
+            },
+
+            {
+                name: "Static Bloom",
+                init: "SB",
+                stars: 4,
+                quote: "Good value and consistent performance."
+            },
+
+            {
+                name: "Neon Drift",
+                init: "ND",
+                stars: 5,
+                quote: "Very stable during busy hours."
+            },
+
+            {
+                name: "Echo Marsh",
+                init: "EM",
+                stars: 5,
+                quote: "The trial made it easy to test the service first."
+            }
+
+        ];
+
+
+        const avatarTones = [
+
+            "from-violet-500 to-fuchsia-600",
+            "from-cyan-500 to-blue-600",
+            "from-amber-500 to-orange-600",
+            "from-emerald-500 to-teal-600",
+            "from-pink-500 to-rose-600"
+
+        ];
+
+
+        function reviewCard(
+            review,
+            index
+        ) {
+
+            const stars =
+                "★".repeat(
+                    review.stars
+                ) +
+                "☆".repeat(
+                    5 -
+                    review.stars
+                );
+
+
+            const tone =
+                avatarTones[
+                    index %
+                    avatarTones.length
+                ];
+
+
+            return `
+
+                <div
+                    class="shrink-0 w-[260px] rounded-2xl border border-white/10 bg-white/[0.02] px-5 py-4"
+                >
+
+                    <div
+                        class="flex items-center gap-3 mb-2"
+                    >
+
+                        <div
+                            class="h-9 w-9 shrink-0 rounded-full bg-gradient-to-br ${tone} flex items-center justify-center text-xs font-bold text-white"
+                        >
+                            ${review.init}
+                        </div>
+
+                        <div>
+
+                            <p
+                                class="text-sm font-bold text-white"
+                            >
+                                ${review.name}
+                            </p>
+
+                            <p
+                                class="text-[11px] text-amber-400"
+                            >
+                                ${stars}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <p
+                        class="text-xs text-slate-400 leading-relaxed"
+                    >
+                        "${review.quote}"
+                    </p>
+
+                </div>
+
+            `;
+
+        }
+
+
+        const reviewTrack =
+            document.getElementById(
+                'reviewTrack'
+            );
+
+
+        if (reviewTrack) {
+
+            const reviewHTML =
+                reviews
+                    .map(
+                        reviewCard
+                    )
+                    .join('');
+
+            reviewTrack.innerHTML =
+                reviewHTML +
+                reviewHTML;
+
+        }
+
+
+        /* =========================================================
+           PRICING
+        ========================================================= */
+
+        const plans = [
+
+            {
+                name: "Starter",
+             desc: "100GB of data every month for browsing, streaming, gaming, downloads, and more.",
+                price: 150,
+                features: [
+                    "1 devices",
+                    "Standard speed",
+                    "All protocols"
+                ]
+            },
+
+            {
+                name: "Standard",
+                desc: "150GB of reliable data for everyday browsing, streaming, gaming, and more.",
+                price: 250,
+                features: [
+                    "3 devices",
+                    "Priority speed",
+                    "All protocols"
+                ]
+            },
+
+            {
+                name: "Pro",
+                desc: "Unlimited data for heavy browsing, streaming, gaming, downloads, and more.",
+                price: 500,
+                features: [
+                    "3 devices",
+                    "Turbo speed",
+                    "Priority routing"
+                ],
+                popular: true
+            },
+
+            {
+                name: "Gamer",
+                desc: "Unlimited data with low latency for smooth, competitive gaming.",
+                price: 1000,
+                features: [
+                    "7 devices",
+                    "Sub-10ms routing",
+                    "Dedicated game servers"
+                ]
+            },
+
+            {
+                name: "Private",
+desc: "Unlimited data with a dedicated IP for maximum control.",
+                price: 1500,
+                features: [
+                    "Dedicated private IP",
+                    "Unlimited everything",
+                    "Priority support"
+                ]
+            }
+
+        ];
+
+
+        function planCard(
+            plan
+        ) {
+
+            const badge =
+                plan.popular
+                ?
+
+                `
+
+                    <span
+                        class="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-600 px-4 py-1 text-[10px] font-bold uppercase tracking-wide text-white"
+                    >
+                        Most popular
+                    </span>
+
+                `
+
+                :
+
+                "";
+
+
+            const features =
+                plan.features
+                    .map(
+                        function (feature) {
+
+                            return `
+
+                                <li
+                                    class="flex gap-2 text-[13px] text-slate-300"
+                                >
+
+                                    <span
+                                        class="text-emerald-400"
+                                    >
+                                        ✓
+                                    </span>
+
+                                    ${feature}
+
+                                </li>
+
+                            `;
+
+                        }
+                    )
+                    .join('');
+
+
+            const cardClasses =
+                plan.popular
+
+                ?
+
+                "border-fuchsia-500/40 bg-gradient-to-b from-fuchsia-950/30 to-white/[0.02] shadow-[0_0_40px_rgba(217,70,239,0.12)]"
+
+                :
+
+                "border-white/10 bg-white/[0.02]";
+
+
+            const buttonClasses =
+                plan.popular
+
+                ?
+
+                "bg-gradient-to-r from-violet-500 to-fuchsia-600 text-white hover:brightness-110"
+
+                :
+
+                "bg-white/5 text-slate-200 hover:bg-white/10";
+
+
+            return `
+
+                <div
+                    class="relative h-full flex flex-col rounded-2xl p-6 border ${cardClasses} reveal-scale"
+                >
+
+                    ${badge}
+
+
+                    <h3
+                        class="font-display text-xl font-bold text-white mt-2"
+                    >
+                        ${plan.name}
+                    </h3>
+
+
+                    <p
+                        class="mt-2 text-xs text-slate-500"
+                    >
+                        ${plan.desc}
+                    </p>
+
+
+                    <div
+                        class="mt-5 flex items-end gap-1"
+                    >
+
+                        <span
+                            class="text-3xl font-bold text-white"
+                        >
+                            LKR ${plan.price} 
+                        </span>
+
+                        <span
+                            class="text-xs text-slate-500 mb-1"
+                        >
+                            /mo
+                        </span>
+
+                    </div>
+
+
+                    <ul
+                        class="mt-6 mb-6 flex-1 space-y-3"
+                    >
+                        ${features}
+                    </ul>
+
+
+                    <a
+                        href="auth.html"
+                        class="w-full text-center rounded-xl px-4 py-3 text-sm font-semibold transition ${buttonClasses}"
+                    >
+                        Get started
+                    </a>
+
+                </div>
+
+            `;
+
+        }
+
+
+        const pricingGrid =
+            document.getElementById(
+                'pricingGrid'
+            );
+
+
+        if (pricingGrid) {
+
+            pricingGrid.innerHTML =
+                plans
+                    .map(
+                        planCard
+                    )
+                    .join('');
+
+        }
+
+
+        /* =========================================================
+           SCROLL REVEAL SYSTEM
+        ========================================================= */
+
+        const revealElements =
+            document.querySelectorAll(
+                '.reveal, .reveal-left, .reveal-right, .reveal-scale'
+            );
+
+
+        const revealObserver =
+            new IntersectionObserver(
+
+                function (entries) {
+
+                    entries.forEach(
+                        function (entry) {
+
+                            if (
+                                entry.isIntersecting
+                            ) {
+
+                                entry.target.classList.add(
+                                    'show'
+                                );
+
+                                revealObserver.unobserve(
+                                    entry.target
+                                );
+
+                            }
+
+                        }
+                    );
+
+                },
+
+                {
+                    threshold: 0.12,
+                    rootMargin:
+                        "0px 0px -60px 0px"
+                }
+
+            );
+
+
+        revealElements.forEach(
+            function (element) {
+
+                revealObserver.observe(
+                    element
+                );
+
+            }
+        );
+
+
+        /* =========================================================
+           NUMBER COUNTERS
+        ========================================================= */
+
+        const counters =
+            document.querySelectorAll(
+                '.counter'
+            );
+
+
+        let counterStarted =
+            false;
+
+
+        function animateCounter(
+            element
+        ) {
+
+            const target =
+                parseFloat(
+                    element.dataset.target
+                );
+
+
+            const decimals =
+                parseInt(
+                    element.dataset.decimals ||
+                    "0"
+                );
+
+
+            const duration =
+                1600;
+
+
+            const start =
+                performance.now();
+
+
+            function update(
+                time
+            ) {
+
+                const progress =
+                    Math.min(
+                        (
+                            time -
+                            start
+                        ) /
+                        duration,
+                        1
+                    );
+
+
+                const eased =
+                    1 -
+                    Math.pow(
+                        1 - progress,
+                        4
+                    );
+
+
+                const value =
+                    target *
+                    eased;
+
+
+                element.textContent =
+                    value.toFixed(
+                        decimals
+                    );
+
+
+                if (
+                    progress < 1
+                ) {
+
+                    requestAnimationFrame(
+                        update
+                    );
+
+                } else {
+
+                    element.textContent =
+                        target.toFixed(
+                            decimals
+                        );
+
+                }
+
+            }
+
+
+            requestAnimationFrame(
+                update
+            );
+
+        }
+
+
+        const statsSection =
+            document.getElementById(
+                'statsSection'
+            );
+
+
+        if (statsSection) {
+
+            const statsObserver =
+                new IntersectionObserver(
+
+                    function (entries) {
+
+                        entries.forEach(
+                            function (entry) {
+
+                                if (
+                                    entry.isIntersecting &&
+                                    !counterStarted
+                                ) {
+
+                                    counterStarted =
+                                        true;
+
+
+                                    counters.forEach(
+                                        function (counter) {
+
+                                            animateCounter(
+                                                counter
+                                            );
+
+                                        }
+                                    );
+
+
+                                    statsObserver.unobserve(
+                                        statsSection
+                                    );
+
+                                }
+
+                            }
+                        );
+
+                    },
+
+                    {
+                        threshold: 0.35
+                    }
+
+                );
+
+
+            statsObserver.observe(
+                statsSection
+            );
+
+        }
+
+
+        /* =========================================================
+           SCROLL DISCOVER
+        ========================================================= */
+
+        document
+            .querySelectorAll(
+                '.scroll-discover'
+            )
+            .forEach(
+                function (button) {
+
+                    button.addEventListener(
+                        'click',
+                        function (event) {
+
+                            event.preventDefault();
+
+
+                            const destination =
+                                document.getElementById(
+                                    'reviews'
+                                );
+
+
+                            if (
+                                destination
+                            ) {
+
+                                destination.scrollIntoView(
+                                    {
+                                        behavior: 'smooth',
+                                        block: 'start'
+                                    }
+                                );
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+
+        /* =========================================================
+           INITIAL REVEAL
+        ========================================================= */
+
+        window.addEventListener(
+            'load',
+            function () {
+
+                setTimeout(
+                    function () {
+
+                        document
+                            .querySelectorAll(
+                                '.reveal, .reveal-left, .reveal-right, .reveal-scale'
+                            )
+                            .forEach(
+                                function (element) {
+
+                                    const rect =
+                                        element.getBoundingClientRect();
+
+
+                                    if (
+                                        rect.top <
+                                        window.innerHeight
+                                    ) {
+
+                                        element.classList.add(
+                                            'show'
+                                        );
+
+                                    }
+
+                                }
+                            );
+
+                    },
+                    100
+                );
+
+            }
+        );
+
+    </script>
+
+</body>
+</html>
