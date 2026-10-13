@@ -403,7 +403,7 @@
         .ticket-row:hover {
             background: rgba(255,255,255,.04);
         }
-    </style>
+    .config-blurred{filter:blur(7px);user-select:none!important;pointer-events:none}#trialServiceModal{overscroll-behavior:contain}</style>
 </head>
 
 <body>
@@ -1129,23 +1129,13 @@
         <!-- ========================= -->
 
         <section id="page-services" class="page">
-            <div class="mb-7">
-                <h1 class="text-2xl md:text-3xl font-bold">Services</h1>
-                <p class="text-sm text-gray-500 mt-2">Your services will display here.</p>
-            </div>
-
-            <div class="glass-panel rounded-3xl p-10 md:p-14 text-center relative overflow-hidden">
-                <div class="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-purple-500/[.07] blur-3xl pointer-events-none"></div>
-                <div class="absolute -bottom-24 -left-24 w-64 h-64 rounded-full bg-blue-500/[.05] blur-3xl pointer-events-none"></div>
-                <div class="relative max-w-xl mx-auto">
-                    <div class="w-14 h-14 mx-auto rounded-2xl border border-white/[.08] bg-white/[.035] flex items-center justify-center mb-5">
-                        <svg width="25" height="25" fill="none" viewBox="0 0 24 24" aria-hidden="true">
-                            <rect x="3" y="4" width="18" height="16" rx="2"></rect>
-                            <path d="M7 8h10M7 12h6M7 16h8"></path>
-                        </svg>
-                    </div>
-                    <h2 class="text-lg md:text-xl font-bold">Your services will display here</h2>
-                    <p class="text-sm text-gray-500 leading-6 mt-2">Once you have services on your account, they will appear in this section.</p>
+            <div class="mb-7"><h1 class="text-2xl md:text-3xl font-bold">Services</h1><p class="text-sm text-gray-500 mt-2">Your active Aura Cloud services.</p></div>
+            <div id="servicesGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+            <div id="servicesEmpty" class="glass-panel rounded-3xl p-10 md:p-14 text-center"><h2 class="text-lg md:text-xl font-bold">No services yet</h2><p class="text-sm text-gray-500 mt-2">Your free trial will appear here after you claim it.</p></div>
+            <div id="trialServiceModal" class="hidden fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm p-4 overflow-y-auto" role="dialog" aria-modal="true">
+                <div class="max-w-2xl mx-auto my-8 glass-panel rounded-3xl p-5 md:p-8">
+                    <div class="flex items-start justify-between gap-4"><div><div class="text-xs uppercase tracking-widest text-purple-300 font-bold">Aura Cloud service</div><h2 class="text-2xl font-bold mt-2">Free Trial</h2></div><button type="button" class="secondary-button" onclick="closeTrialService()">Close</button></div>
+                    <div id="trialServiceContent" class="mt-6"><p class="text-sm text-gray-400">Loading service details…</p></div>
                 </div>
             </div>
         </section>
@@ -2009,6 +1999,7 @@ async function loadLoggedInUser() {
         loadProfileFields(currentUser);
 
         loadTickets();
+        await loadTrialStatus();
 
     } catch (error) {
 
@@ -2132,7 +2123,10 @@ async function logoutUser() {
    PAGE NAVIGATION
    ========================================================= */
 
+let trialAlreadyClaimed = false;
+
 function openPage(pageName) {
+    if (pageName === 'trial' && trialAlreadyClaimed) pageName = 'services';
 
     document.querySelectorAll(".page")
         .forEach(page => {
@@ -2170,9 +2164,9 @@ function openPage(pageName) {
     });
 
 
-    if (pageName === "support") {
-        loadTickets();
-    }
+    if (pageName === "support") loadTickets();
+    if (pageName === "services") loadServices();
+    if (pageName === "trial") loadTrialStatus();
 }
 
 
@@ -3253,25 +3247,67 @@ function selectTrialIsp(isp) {
     }).join("");
 }
 
+const TRIAL_DATA_DISPLAY = "300 GB";
+let trialServiceCache = null;
+let trialConfigVisible = false;
+async function trialApi(url, options) {
+  const response = await fetch(url,{credentials:"include",...(options||{}),headers:{Accept:"application/json",...((options&&options.body)?{"Content-Type":"application/json"}:{}),...((options&&options.headers)||{})}});
+  const data = await response.json().catch(()=>({}));
+  if (!response.ok || data.success === false) throw new Error(data.message || "Request failed.");
+  return data;
+}
+async function loadTrialStatus() {
+  try {
+    const data = await trialApi("/api/trial");
+    trialAlreadyClaimed = Boolean(data.claimed && data.service);
+    const nav = document.querySelector('.nav-button[data-page="trial"]');
+    if (nav) nav.classList.toggle("hidden",trialAlreadyClaimed);
+    if (trialAlreadyClaimed) ["trialIntro","trialProviderStep","trialPlansStep"].forEach(id=>document.getElementById(id)?.classList.add("hidden"));
+    if (document.getElementById("page-services")?.classList.contains("active")) renderServices(data.service);
+  } catch(e) { console.warn("[TRIAL]",e.message); }
+}
+async function loadServices() {
+  try { const data=await trialApi("/api/trial"); trialAlreadyClaimed=Boolean(data.claimed&&data.service); const nav=document.querySelector('.nav-button[data-page="trial"]'); if(nav)nav.classList.toggle("hidden",trialAlreadyClaimed); renderServices(data.service); }
+  catch(e) { const empty=document.getElementById("servicesEmpty"); if(empty){empty.classList.remove("hidden");empty.querySelector("h2").textContent="Services couldn't load";empty.querySelector("p").textContent=e.message;} }
+}
+function renderServices(service) {
+  const grid=document.getElementById("servicesGrid"), empty=document.getElementById("servicesEmpty"); if(!grid||!empty)return; grid.innerHTML="";
+  if(!service){empty.classList.remove("hidden");return;} empty.classList.add("hidden");
+  const card=document.createElement("button");card.type="button";card.className="glass-panel glass-panel-hover rounded-2xl p-6 text-left w-full";
+  card.innerHTML='<div class="flex justify-between gap-3"><div class="w-12 h-12 rounded-2xl bg-purple-500/10 p-3 text-purple-300 font-bold">AC</div><span class="text-xs rounded-full px-3 py-1 bg-green-500/10 text-green-300">'+escapeHTML(service.status||"active")+'</span></div><div class="mt-5 text-xs text-purple-300 uppercase tracking-widest font-bold">Free Trial</div><h3 class="text-xl font-bold mt-2">'+escapeHTML(service.plan||"Free Trial")+'</h3><p class="text-sm text-gray-400 mt-2">'+escapeHTML(service.isp||"Selected ISP")+'</p><div class="grid grid-cols-2 gap-3 mt-5"><div class="rounded-xl bg-white/[.035] p-3"><div class="text-xs text-gray-500">Data limit</div><div class="font-semibold mt-1">'+Number(service.dataLimitGB||300)+' GB</div></div><div class="rounded-xl bg-white/[.035] p-3"><div class="text-xs text-gray-500">IP limit</div><div class="font-semibold mt-1">'+Number(service.ipLimit||1)+' IP</div></div></div><div class="text-sm text-purple-300 font-semibold mt-5">View usage & connection details →</div>';
+  card.addEventListener("click",openTrialService);grid.appendChild(card);
+}
+async function claimFreeTrial() {
+  if(!selectedTrialIsp||!selectedTrialPlan){showToast("Choose an ISP and plan first.");return;}
+  const button=document.getElementById("claimTrialButton");if(button){button.disabled=true;button.textContent="Creating your trial…";}
+  try {
+    const result=await trialApi("/api/trial/claim",{method:"POST",body:JSON.stringify({isp:selectedTrialIsp,plan:selectedTrialPlan})});
+    trialAlreadyClaimed=true;["trialIntro","trialProviderStep","trialPlansStep"].forEach(id=>document.getElementById(id)?.classList.add("hidden"));
+    const nav=document.querySelector('.nav-button[data-page="trial"]');if(nav)nav.classList.add("hidden");
+    showToast("Your free trial is active.");openPage("services");renderServices(result.service);
+  } catch(e) {showToast(e.message||"Couldn't create your trial.");if(button){button.disabled=false;button.textContent="Claim Free Trial";}}
+}
+async function openTrialService() {
+  const modal=document.getElementById("trialServiceModal"),content=document.getElementById("trialServiceContent");if(!modal||!content)return;
+  modal.classList.remove("hidden");content.innerHTML='<p class="text-sm text-gray-400">Loading service details…</p>';trialConfigVisible=false;
+  try {
+    const result=await trialApi("/api/trial/service"),service=result.service;trialServiceCache=service;
+    const used=Number(service.usedBytes||0),total=Number(service.totalBytes||Number(service.dataLimitGB||300)*1024*1024*1024),percent=Math.max(0,Math.min(100,total?used/total*100:0));
+    const expiry=service.expiresAt?new Date(service.expiresAt).toLocaleString():"Not available";
+    content.innerHTML='<div class="grid grid-cols-2 md:grid-cols-4 gap-3"><div class="rounded-xl bg-white/[.035] p-3"><div class="text-xs text-gray-500">Plan</div><div class="font-semibold mt-1">'+escapeHTML(service.plan)+'</div></div><div class="rounded-xl bg-white/[.035] p-3"><div class="text-xs text-gray-500">Data limit</div><div class="font-semibold mt-1">'+Number(service.dataLimitGB||300)+' GB</div></div><div class="rounded-xl bg-white/[.035] p-3"><div class="text-xs text-gray-500">IP limit</div><div class="font-semibold mt-1">'+Number(service.ipLimit||1)+' IP</div></div><div class="rounded-xl bg-white/[.035] p-3"><div class="text-xs text-gray-500">Expires</div><div class="text-xs font-semibold mt-1">'+escapeHTML(expiry)+'</div></div></div><div class="mt-6"><div class="flex justify-between text-sm gap-3"><span class="text-gray-400">Data usage</span><span>'+formatTrialBytes(used)+' / '+formatTrialBytes(total)+'</span></div><div class="h-2 rounded-full bg-white/10 mt-3 overflow-hidden"><div class="h-full bg-gradient-to-r from-purple-500 to-blue-400" style="width:'+percent+'%"></div></div><p class="text-xs text-gray-500 mt-2">Usage refreshes from the panel when statistics are available.</p></div><div class="mt-6 rounded-2xl border border-white/10 p-4"><div class="flex items-center justify-between gap-3"><div><h3 class="font-bold">Connection config</h3><p class="text-xs text-gray-500 mt-1">SNI: '+escapeHTML(service.sni||"")+'</p></div><button type="button" class="secondary-button" onclick="toggleTrialConfig()">Reveal config & QR</button></div><div class="mt-4"><div id="trialConfigText" class="config-blurred rounded-xl bg-black/30 border border-white/10 p-3 text-xs break-all font-mono select-all">'+escapeHTML(service.config)+'</div><div class="flex justify-center mt-4"><div id="trialQr" class="config-blurred bg-white p-3 rounded-xl min-h-[160px] min-w-[160px] flex items-center justify-center"></div></div><p class="text-xs text-gray-500 mt-3 text-center">Keep this configuration private.</p></div></div>';
+    const qr=document.getElementById("trialQr");if(window.QRCode&&qr)new QRCode(qr,{text:service.config,width:180,height:180,correctLevel:QRCode.CorrectLevel.M});else if(qr)qr.textContent="QR library unavailable";
+  } catch(e) {content.innerHTML='<p class="text-sm text-red-300">'+escapeHTML(e.message||"Unable to load service details.")+'</p>';}
+}
+function toggleTrialConfig(){trialConfigVisible=!trialConfigVisible;document.getElementById("trialConfigText")?.classList.toggle("config-blurred",!trialConfigVisible);document.getElementById("trialQr")?.classList.toggle("config-blurred",!trialConfigVisible);const b=document.querySelector("#trialServiceContent button[onclick='toggleTrialConfig()']");if(b)b.textContent=trialConfigVisible?"Hide config & QR":"Reveal config & QR";}
+function closeTrialService(){document.getElementById("trialServiceModal")?.classList.add("hidden");}
+function formatTrialBytes(bytes){const gb=Number(bytes||0)/(1024*1024*1024);return gb.toFixed(gb>=10?0:2)+" GB";}
 function selectTrialPlan(plan) {
-    const allowedPlans = TRIAL_PLANS_BY_ISP[selectedTrialIsp] || [];
-    if (!allowedPlans.includes(plan)) {
-        showToast("That plan isn't available for the selected ISP.");
-        return;
-    }
-    selectedTrialPlan = plan;
-    document.querySelectorAll(".trial-plan").forEach(card => {
-        const isSelected = card.dataset.plan === plan;
-        card.classList.toggle("selected", isSelected);
-        const button = card.querySelector(".trial-select-button");
-        if (button) {
-            button.disabled = isSelected;
-            button.textContent = isSelected ? "Selected" : "Select plan";
-        }
-    });
-    const notice = document.getElementById("trialSelectionNotice");
-    notice.classList.remove("hidden");
-    notice.innerHTML = `<div class="font-semibold text-white">${escapeHTML(plan)} selected</div><p class="text-sm text-gray-400 mt-2">Provider: ${escapeHTML(selectedTrialIsp)}. Your selection is shown here; trial activation or account provisioning is not connected to this page yet.</p>`;
+  const allowed=TRIAL_PLANS_BY_ISP[selectedTrialIsp]||[];
+  if(!allowed.includes(plan)){showToast("That plan isn't available for the selected ISP.");return;}
+  selectedTrialPlan=plan;
+  document.querySelectorAll(".trial-plan").forEach(card=>{const selected=card.dataset.plan===plan;card.classList.toggle("selected",selected);const button=card.querySelector(".trial-select-button");if(button){button.disabled=selected;button.textContent=selected?"Selected":"Select plan";}});
+  const notice=document.getElementById("trialSelectionNotice");notice.classList.remove("hidden");
+  notice.innerHTML='<div class="font-semibold text-white">'+escapeHTML(plan)+' Free Trial selected</div><p class="text-sm text-gray-400 mt-2">Provider: '+escapeHTML(selectedTrialIsp)+'. 300 GB data and one IP address.</p><button type="button" id="claimTrialButton" class="primary-button mt-5" onclick="claimFreeTrial()">Claim Free Trial</button><p class="text-xs text-gray-500 mt-3">One free trial per account. Your signed-in account email is used.</p>';
 }
 
 /* =========================================================
@@ -3283,5 +3319,6 @@ loadLoggedInUser();
 
 </script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" referrerpolicy="no-referrer"></script>
 </body>
 </html>
